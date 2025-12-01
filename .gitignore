@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Environment variables (contains passwords!)
+.env
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Optional npm cache directory
+.npm

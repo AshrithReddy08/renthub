@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller - List Your Item</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #f5576c;
+            box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.1);
+        }
+
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-upload-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .file-upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .file-name {
+            margin-top: 10px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 15px;
+            border-radius: 12px;
+            display: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.3);
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(245, 87, 108, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            display: none;
+            padding: 15px;
+            background: #4caf50;
+            color: white;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .error-message {
+            display: none;
+            padding: 15px;
+            background: #f44336;
+            color: white;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .stats {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f5576c;
+        }
+
+        .stats-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 25px;
+            }
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        if (!sessionStorage.getItem('sellerAccess')) {
+            alert('⚠️ Please access through the home page!');
+            window.location.href = 'index.html';
+        }
+        sessionStorage.removeItem('sellerAccess');
+    </script>
+
+    <a href="index.html" class="back-btn">← Back to Home</a>
+
+    <div class="header">
+        <h1>📦 List Your Item</h1>
+        <p>Fill in the details to start earning!</p>
+    </div>
+
+    <div class="form-container">
+        <div class="stats">
+            <div class="stats-number" id="totalItems">Loading...</div>
+            <div class="stats-label">Total Items Listed</div>
+        </div>
+
+        <form id="sellerForm">
+            <div class="form-group">
+                <label for="itemName">Item Name *</label>
+                <input type="text" id="itemName" placeholder="e.g., DSLR Camera, Drill Machine" required>
+            </div>
+
+            <div class="form-group">
+                <label for="itemDescription">Description (Optional)</label>
+                <textarea id="itemDescription" placeholder="Describe your item, condition, etc."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="itemPhoto">Item Photo *</label>
+                <div class="file-upload">
+                    <label for="itemPhoto" class="file-upload-btn">
+                        📸 Choose Photo
+                    </label>
+                    <input type="file" id="itemPhoto" accept="image/*" required>
+                </div>
+                <div class="file-name" id="fileName">No file chosen</div>
+                <img id="preview" class="preview-image" alt="Preview">
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category *</label>
+                <select id="category" required>
+                    <option value="">Select category</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="tools">Tools & Equipment</option>
+                    <option value="sports">Sports & Fitness</option>
+                    <option value="party">Party & Events</option>
+                    <option value="camping">Camping & Outdoor</option>
+                    <option value="photography">Photography</option>
+                    <option value="books">Books & Media</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="availability">Availability *</label>
+                <select id="availability" required>
+                    <option value="">Select availability</option>
+                    <option value="available">Available</option>
+                    <option value="not-available">Not Available</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Rental Price (₹/day) *</label>
+                <input type="number" id="price" placeholder="e.g., 500" min="1" required>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                ✨ List Item
+            </button>
+
+            <div class="success-message" id="successMessage">
+                ✅ Item listed successfully!
+            </div>
+            <div class="error-message" id="errorMessage">
+                ❌ Error listing item. Please try again.
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // ============ MONGODB BACKEND API ============
+        const API_URL = 'http://localhost:5000/api/items';
+
+        // Load stats on page load
+        loadStats();
+
+        async function loadStats() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('totalItems').textContent = data.count;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                document.getElementById('totalItems').textContent = '0';
+            }
+        }
+
+        // File upload preview
+        const photoInput = document.getElementById('itemPhoto');
+        const fileName = document.getElementById('fileName');
+        const preview = document.getElementById('preview');
+        let photoBase64 = '';
+
+        photoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                fileName.textContent = file.name;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photoBase64 = e.target.result;
+                    preview.src = photoBase64;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Form submission with MongoDB API
+        const form = document.getElementById('sellerForm');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            console.log('Form submitted - starting upload to MongoDB...');
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Uploading to MongoDB...';
+
+            // Prepare data to send to backend
+            const itemData = {
+                name: document.getElementById('itemName').value,
+                description: document.getElementById('itemDescription').value,
+                category: document.getElementById('category').value,
+                availability: document.getElementById('availability').value,
+                price: parseInt(document.getElementById('price').value),
+                photo: photoBase64
+            };
+
+            console.log('Item data prepared:', {
+                name: itemData.name,
+                category: itemData.category,
+                price: itemData.price,
+                photoLength: photoBase64.length
+            });
+
+            try {
+                console.log('Sending POST request to:', API_URL);
+                
+                // Send POST request to backend
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(itemData)
+                });
+
+                console.log('Response status:', response.status);
+                
+                const result = await response.json();
+                console.log('Response data:', result);
+
+                if (result.success) {
+                    // Show success message
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                    
+                    console.log('Item saved to MongoDB successfully!');
+                    
+                    // Reset form
+                    form.reset();
+                    preview.style.display = 'none';
+                    fileName.textContent = 'No file chosen';
+                    photoBase64 = '';
+
+                    // Update stats
+                    loadStats();
+
+                    // Hide success message after 3 seconds
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                } else {
+                    throw new Error(result.message || 'Failed to create item');
+                }
+
+            } catch (error) {
+                console.error('Error submitting to backend:', error);
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = '❌ Error: ' + error.message;
+                successMessage.style.display = 'none';
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✨ List Item';
+            }
+        });
+    </script>
+</body>
+</html>

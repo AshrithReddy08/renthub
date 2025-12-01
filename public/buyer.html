@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer - Find Items to Rent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #00f2fe;
+            box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.1);
+        }
+
+        .search-btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .results-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .results-header {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .item-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .item-details {
+            padding: 20px;
+        }
+
+        .item-category {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .item-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .item-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .item-price {
+            font-size: 1.5rem;
+            color: #00f2fe;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .item-availability {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .available {
+            background: #e8f5e9;
+            color: #4caf50;
+        }
+
+        .not-available {
+            background: #ffebee;
+            color: #f44336;
+        }
+
+        .item-date {
+            font-size: 0.8rem;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .bill-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .bill-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .bill-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bill-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: popUp 0.3s ease-out;
+        }
+
+        @keyframes popUp {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .bill-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .bill-header h2 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .bill-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .bill-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00f2fe;
+        }
+
+        .close-bill {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .search-box {
+                flex-direction: column;
+            }
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        if (!sessionStorage.getItem('buyerAccess')) {
+            alert('⚠️ Please access through the home page!');
+            window.location.href = 'index.html';
+        }
+        sessionStorage.removeItem('buyerAccess');
+    </script>
+
+    <a href="index.html" class="back-btn">← Back to Home</a>
+
+    <div class="header">
+        <h1>🛍️ Find Items to Rent</h1>
+        <p>Search and discover amazing items near you!</p>
+    </div>
+
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search for items... (e.g., camera, drill)">
+            <button class="search-btn" id="searchBtn">🔍 Search</button>
+        </div>
+        <div class="filters">
+            <select class="filter-select" id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="electronics">Electronics</option>
+                <option value="tools">Tools & Equipment</option>
+                <option value="sports">Sports & Fitness</option>
+                <option value="party">Party & Events</option>
+                <option value="camping">Camping & Outdoor</option>
+                <option value="photography">Photography</option>
+                <option value="books">Books & Media</option>
+                <option value="other">Other</option>
+            </select>
+            <select class="filter-select" id="availabilityFilter">
+                <option value="">All Items</option>
+                <option value="available">Available Only</option>
+                <option value="not-available">Not Available</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="results-container">
+        <div class="results-header" id="resultsHeader"></div>
+        <div class="results-grid" id="resultsGrid">
+            <div class="no-results">
+                Loading items from MongoDB...
+            </div>
+        </div>
+    </div>
+
+    <!-- Bill Modal -->
+    <div class="bill-modal" id="billModal">
+        <div class="bill-content">
+            <div class="bill-header">
+                <h2>📄 Rental Bill</h2>
+                <p style="color: #666;">Transaction Summary</p>
+            </div>
+            <div id="billDetails"></div>
+            <button class="close-bill" id="closeBillBtn">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // ============ MONGODB BACKEND API ============
+        const API_URL = 'http://localhost:5000/api/items';
+
+        let allItems = [];
+
+        // Load items on page load
+        window.addEventListener('load', loadItems);
+
+        async function loadItems() {
+            console.log('Loading items from MongoDB...');
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                console.log('Response from backend:', data);
+                
+                if (data.success) {
+                    allItems = data.data;
+                    console.log('Items loaded:', allItems.length);
+                    filterItems();
+                } else {
+                    throw new Error('Failed to load items');
+                }
+            } catch (error) {
+                console.error('Error loading items:', error);
+                document.getElementById('resultsGrid').innerHTML = 
+                    '<div class="no-results">Error loading items. Please make sure the backend server is running!</div>';
+            }
+        }
+
+        function filterItems() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const availabilityFilter = document.getElementById('availabilityFilter').value;
+
+            // Filter items
+            let filteredItems = allItems.filter(item => {
+                const matchesSearch = item.name.toLowerCase().includes(searchTerm) || 
+                                     (item.description && item.description.toLowerCase().includes(searchTerm));
+                const matchesCategory = !categoryFilter || item.category === categoryFilter;
+                const matchesAvailability = !availabilityFilter || item.availability === availabilityFilter;
+                
+                return matchesSearch && matchesCategory && matchesAvailability;
+            });
+
+            displayItems(filteredItems);
+        }
+
+        function displayItems(items) {
+            const resultsGrid = document.getElementById('resultsGrid');
+            const resultsHeader = document.getElementById('resultsHeader');
+            
+            if (items.length === 0) {
+                resultsGrid.innerHTML = '<div class="no-results">No items found. Try a different search or be the first to list an item!</div>';
+                resultsHeader.textContent = '';
+                return;
+            }
+
+            resultsHeader.textContent = `Found ${items.length} item${items.length > 1 ? 's' : ''}`;
+
+            resultsGrid.innerHTML = items.map((item) => {
+                const dateAdded = new Date(item.dateAdded || item.createdAt).toLocaleDateString();
+                
+                return `
+                <div class="item-card">
+                    <img src="${item.photo}" alt="${item.name}" class="item-image" onerror="this.src='https://via.placeholder.com/280x200?text=No+Image'">
+                    <div class="item-details">
+                        <span class="item-category">${item.category}</span>
+                        <div class="item-name">${item.name}</div>
+                        ${item.description ? `<div class="item-description">${item.description.substring(0, 80)}${item.description.length > 80 ? '...' : ''}</div>` : ''}
+                        <div class="item-price">₹${item.price}/day</div>
+                        <span class="item-availability ${item.availability}">
+                            ${item.availability === 'available' ? '✓ Available' : '✗ Not Available'}
+                        </span>
+                        <div class="item-date">Listed on ${dateAdded}</div>
+                        <button class="bill-btn" onclick='generateBill(${JSON.stringify(item).replace(/'/g, "&apos;")})'>
+                            Generate Bill
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function generateBill(item) {
+            const modal = document.getElementById('billModal');
+            const billDetails = document.getElementById('billDetails');
+            
+            const deposit = Math.round(item.price * 0.5); // 50% deposit
+            const total = parseInt(item.price) + deposit;
+            
+            billDetails.innerHTML = `
+                <div class="bill-item">
+                    <span>Item Name:</span>
+                    <strong>${item.name}</strong>
+                </div>
+                <div class="bill-item">
+                    <span>Category:</span>
+                    <strong>${item.category}</strong>
+                </div>
+                <div class="bill-item">
+                    <span>Rental (per day):</span>
+                    <strong>₹${item.price}</strong>
+                </div>
+                <div class="bill-item">
+                    <span>Security Deposit:</span>
+                    <strong>₹${deposit}</strong>
+                </div>
+                <div class="bill-total">
+                    <span>Total Amount:</span>
+                    <strong>₹${total}</strong>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeBill() {
+            document.getElementById('billModal').style.display = 'none';
+        }
+
+        // Event listeners
+        document.getElementById('searchBtn').addEventListener('click', filterItems);
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                filterItems();
+            }
+        });
+        document.getElementById('categoryFilter').addEventListener('change', filterItems);
+        document.getElementById('availabilityFilter').addEventListener('change', filterItems);
+        document.getElementById('closeBillBtn').addEventListener('click', closeBill);
+        document.getElementById('billModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeBill();
+            }
+        });
+    </script>
+</body>
+</html>

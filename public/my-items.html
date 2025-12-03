@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Items - RentHub</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    nav {
+      background: white;
+      padding: 15px 30px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    nav .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    nav .nav-links {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    nav a, nav button {
+      text-decoration: none;
+      color: #333;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+
+    nav a:hover, nav button:hover {
+      background: #f0f0f0;
+    }
+
+    nav button.logout-btn {
+      background: #ff6b6b;
+      color: white;
+    }
+
+    nav button.logout-btn:hover {
+      background: #ff5252;
+    }
+
+    nav a.active {
+      background: #667eea;
+      color: white;
+    }
+
+    .header {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .header h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .upload-btn {
+      background: #667eea;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .upload-btn:hover {
+      background: #5568d3;
+    }
+
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .item-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+
+    .item-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .item-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: #f0f0f0;
+    }
+
+    .item-details {
+      padding: 20px;
+    }
+
+    .item-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .item-description {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .item-category {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .item-price {
+      font-weight: bold;
+      color: #667eea;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .availability {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+
+    .availability.available {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .availability.not-available {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      flex: 1;
+      min-width: 80px;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.3s;
+      font-weight: 500;
+    }
+
+    .edit-btn {
+      background: #667eea;
+      color: white;
+    }
+
+    .edit-btn:hover {
+      background: #5568d3;
+    }
+
+    .delete-btn {
+      background: #ff6b6b;
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background: #ff5252;
+    }
+
+    .toggle-btn {
+      background: #ffc107;
+      color: white;
+    }
+
+    .toggle-btn:hover {
+      background: #ffb300;
+    }
+
+    .empty-state {
+      text-align: center;
+      background: white;
+      padding: 60px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-state h2 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .empty-state p {
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: white;
+    }
+
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .alert {
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .alert.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
+
+    .alert.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      overflow: auto;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      color: #333;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .close-btn:hover {
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .form-actions button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .save-btn {
+      background: #667eea;
+      color: white;
+    }
+
+    .save-btn:hover {
+      background: #5568d3;
+    }
+
+    .cancel-btn {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .cancel-btn:hover {
+      background: #d0d0d0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <div class="logo">RentHub</div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="buyer.html">Browse Items</a>
+        <a href="seller.html">Upload Item</a>
+        <a href="my-items.html" class="active">My Items</a>
+        <span id="userName" style="color: #667eea; font-weight: bold;"></span>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </nav>
+
+    <div class="header">
+      <h1>My Listed Items</h1>
+      <p>Manage all your rental listings. Edit details, toggle availability, or delete items.</p>
+      <a href="seller.html" class="upload-btn">📤 Upload New Item</a>
+    </div>
+
+    <div id="alertBox" class="alert"></div>
+
+    <div id="loadingState" class="loading" style="display: none;">
+      <div class="spinner"></div>
+      <p>Loading your items...</p>
+    </div>
+
+    <div id="itemsContainer" class="items-grid"></div>
+
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <h2>No Items Listed Yet</h2>
+      <p>Start by uploading your first item to rent!</p>
+      <a href="seller.html" class="upload-btn">📤 Upload Your First Item</a>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Item</h2>
+        <button class="close-btn" onclick="closeEditModal()">&times;</button>
+      </div>
+      <form onsubmit="saveItemChanges(event)">
+        <div class="form-group">
+          <label for="editItemName">Item Name</label>
+          <input type="text" id="editItemName" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editItemDescription">Description</label>
+          <textarea id="editItemDescription" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="editItemCategory">Category</label>
+          <select id="editItemCategory" required>
+            <option value="">Select Category</option>
+            <option value="electronics">Electronics</option>
+            <option value="furniture">Furniture</option>
+            <option value="tools">Tools</option>
+            <option value="sports">Sports</option>
+            <option value="books">Books</option>
+            <option value="clothing">Clothing</option>
+            <option value="toys">Toys</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="editItemPrice">Price (₹/day)</label>
+          <input type="number" id="editItemPrice" min="1" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editItemAvailability">Availability</label>
+          <select id="editItemAvailability" required>
+            <option value="available">Available</option>
+            <option value="not-available">Not Available</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="editItemPhoto">Item Photo (Optional - Leave empty to keep current)</label>
+          <input type="file" id="editItemPhoto" accept="image/*">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="save-btn">Save Changes</button>
+          <button type="button" class="cancel-btn" onclick="closeEditModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="config.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    let currentEditingItemId = null;
+    let allItems = [];
+
+    // ============== PAGE LOAD ==============
+    window.addEventListener('load', () => {
+      console.log('Page loaded, checking authentication...');
+      
+      if (!auth.isLoggedIn()) {
+        console.log('Not logged in, redirecting to login...');
+        alert('Please login first!');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const user = auth.getCurrentUser();
+      console.log('Current user:', user);
+      document.getElementById('userName').textContent = user.name + ' 👤';
+      
+      loadSellerItems();
+    });
+
+    // ============== LOAD SELLER'S ITEMS ==============
+    async function loadSellerItems() {
+      const loadingState = document.getElementById('loadingState');
+      const itemsContainer = document.getElementById('itemsContainer');
+      const emptyState = document.getElementById('emptyState');
+      
+      loadingState.style.display = 'block';
+      itemsContainer.innerHTML = '';
+      emptyState.style.display = 'none';
+
+      try {
+        const token = auth.getToken();
+        console.log('Fetching items with token...');
+        
+        const response = await fetch(`${API_BASE_URL}/api/my-items`, {
+
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('API Error:', errorData);
+          throw new Error(errorData.message || 'Failed to load items');
+        }
+
+        const result = await response.json();
+        console.log('Fetched result:', result);
+        
+        loadingState.style.display = 'none';
+
+        if (!result.success || !result.data || result.data.length === 0) {
+          console.log('No items found');
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        allItems = result.data;
+
+        // Render items
+        itemsContainer.innerHTML = allItems.map((item, index) => `
+          <div class="item-card" data-item-index="${index}">
+            <img src="${item.photo}" alt="${escapeHtml(item.name)}" class="item-image" 
+                 onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+            <div class="item-details">
+              <div class="item-name">${escapeHtml(item.name)}</div>
+              <div class="item-description">${escapeHtml(item.description)}</div>
+              <span class="item-category">${escapeHtml(item.category)}</span>
+              <div class="item-price">₹${item.price}/day</div>
+              <span class="availability ${item.availability === 'available' ? 'available' : 'not-available'}">
+                ${item.availability === 'available' ? '✅ Available' : '❌ Not Available'}
+              </span>
+              <div class="item-actions">
+                <button class="btn edit-btn" onclick="editItem(${index})">
+                  ✏️ Edit
+                </button>
+                <button class="btn toggle-btn" onclick="toggleAvailability('${item._id}', '${item.availability === 'available' ? 'not-available' : 'available'}')">
+                  ${item.availability === 'available' ? '🔒 Make Unavailable' : '🔓 Make Available'}
+                </button>
+                <button class="btn delete-btn" onclick="deleteItem('${item._id}', '${escapeAttr(item.name)}')">
+                  🗑️ Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (error) {
+        console.error('Error loading items:', error);
+        loadingState.style.display = 'none';
+        showAlert('Error loading items: ' + error.message, 'error');
+        emptyState.style.display = 'block';
+      }
+    }
+
+    // ============== EDIT ITEM ==============
+    function editItem(itemIndex) {
+      const item = allItems[itemIndex];
+      console.log('Opening edit modal for item:', item);
+      
+      currentEditingItemId = item._id;
+      
+      document.getElementById('editItemName').value = item.name;
+      document.getElementById('editItemDescription').value = item.description;
+      document.getElementById('editItemCategory').value = item.category;
+      document.getElementById('editItemPrice').value = item.price;
+      document.getElementById('editItemAvailability').value = item.availability;
+      document.getElementById('editItemPhoto').value = '';
+      
+      document.getElementById('editModal').classList.add('active');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.remove('active');
+      currentEditingItemId = null;
+    }
+
+    // ============== SAVE ITEM CHANGES ==============
+    async function saveItemChanges(event) {
+      event.preventDefault();
+      console.log('Saving changes for item:', currentEditingItemId);
+
+      const name = document.getElementById('editItemName').value;
+      const description = document.getElementById('editItemDescription').value;
+      const category = document.getElementById('editItemCategory').value;
+      const price = document.getElementById('editItemPrice').value;
+      const availability = document.getElementById('editItemAvailability').value;
+      const photoFile = document.getElementById('editItemPhoto').files[0];
+
+      try {
+        let updateData = {
+          name,
+          description,
+          category,
+          price: parseInt(price),
+          availability
+        };
+
+        if (photoFile) {
+          console.log('Converting new photo to base64...');
+          const base64Photo = await fileToBase64(photoFile);
+          updateData.photo = base64Photo;
+        }
+
+        const token = auth.getToken();
+        const response = await fetch(`${API_BASE_URL}/api/items/${currentEditingItemId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(updateData)
+        });
+
+        console.log('Update response status:', response.status);
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to update item');
+        }
+
+        console.log('Item updated successfully!');
+        closeEditModal();
+        showAlert('✅ Item updated successfully!', 'success');
+        loadSellerItems();
+
+      } catch (error) {
+        console.error('Error updating item:', error);
+        showAlert('❌ Error updating item: ' + error.message, 'error');
+      }
+    }
+
+    // ============== TOGGLE AVAILABILITY ==============
+    async function toggleAvailability(itemId, newAvailability) {
+      console.log('Toggling availability for item:', itemId, 'to:', newAvailability);
+
+      try {
+        const token = auth.getToken();
+        const response = await fetch(`${API_BASE_URL}/api/items/${itemId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ availability: newAvailability })
+        });
+
+        console.log('Toggle response status:', response.status);
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to update availability');
+        }
+
+        console.log('Availability toggled successfully!');
+        showAlert(`✅ Item marked as ${newAvailability}!`, 'success');
+        loadSellerItems();
+
+      } catch (error) {
+        console.error('Error toggling availability:', error);
+        showAlert('❌ Error: ' + error.message, 'error');
+      }
+    }
+
+    // ============== DELETE ITEM ==============
+    async function deleteItem(itemId, itemName) {
+      console.log('Deleting item:', itemId);
+
+      if (!confirm(`Are you sure you want to delete "${itemName}"? This action cannot be undone.`)) {
+        console.log('Delete cancelled by user');
+        return;
+      }
+
+      try {
+        const token = auth.getToken();
+        const response = await fetch(`${API_BASE_URL}/api/items/${itemId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        console.log('Delete response status:', response.status);
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to delete item');
+        }
+
+        console.log('Item deleted successfully!');
+        showAlert('✅ Item deleted successfully!', 'success');
+        loadSellerItems();
+
+      } catch (error) {
+        console.error('Error deleting item:', error);
+        showAlert('❌ Error deleting item: ' + error.message, 'error');
+      }
+    }
+
+    // ============== UTILITY FUNCTIONS ==============
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    function escapeAttr(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function showAlert(message, type) {
+      const alertBox = document.getElementById('alertBox');
+      alertBox.textContent = message;
+      alertBox.className = `alert ${type}`;
+      
+      setTimeout(() => {
+        alertBox.className = 'alert';
+      }, 4000);
+    }
+
+    function logout() {
+      auth.logout();
+      window.location.href = 'index.html';
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', (event) => {
+      const modal = document.getElementById('editModal');
+      if (event.target === modal) {
+        closeEditModal();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -18,10 +18,70 @@
             padding: 20px;
         }
 
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-nav {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .user-info {
+            color: white;
+            text-align: right;
+            margin-right: 15px;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .user-email {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        #logoutBtn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        #logoutBtn:hover {
+            background: white;
+            color: #00f2fe;
+        }
+
         .header {
             text-align: center;
             color: white;
             margin-bottom: 30px;
+            margin-top: 80px;
         }
 
         .header h1 {
@@ -31,7 +91,7 @@
 
         .back-btn {
             position: fixed;
-            top: 20px;
+            top: 80px;
             left: 20px;
             padding: 10px 20px;
             background: rgba(255, 255, 255, 0.3);
@@ -157,6 +217,7 @@
             width: 100%;
             height: 200px;
             object-fit: cover;
+            background: #f0f0f0;
         }
 
         .item-details {
@@ -187,6 +248,14 @@
             color: #666;
             margin-bottom: 10px;
             line-height: 1.4;
+            min-height: 30px;
+        }
+
+        .item-seller {
+            font-size: 0.85rem;
+            color: #00f2fe;
+            margin-bottom: 10px;
+            font-weight: 600;
         }
 
         .item-price {
@@ -330,13 +399,16 @@
     </style>
 </head>
 <body>
-    <script>
-        if (!sessionStorage.getItem('buyerAccess')) {
-            alert('⚠️ Please access through the home page!');
-            window.location.href = 'index.html';
-        }
-        sessionStorage.removeItem('buyerAccess');
-    </script>
+    <div class="navbar">
+        <a href="index.html" class="logo-nav">🏪 RentHub</a>
+        <div class="nav-buttons">
+            <div class="user-info">
+                <div class="user-name" id="userName">User</div>
+                <div class="user-email" id="userEmail">email@example.com</div>
+            </div>
+            <button id="logoutBtn">Logout</button>
+        </div>
+    </div>
 
     <a href="index.html" class="back-btn">← Back to Home</a>
 
@@ -373,13 +445,10 @@
     <div class="results-container">
         <div class="results-header" id="resultsHeader"></div>
         <div class="results-grid" id="resultsGrid">
-            <div class="no-results">
-                Loading items from MongoDB...
-            </div>
+            <div class="no-results">Loading items...</div>
         </div>
     </div>
 
-    <!-- Bill Modal -->
     <div class="bill-modal" id="billModal">
         <div class="bill-content">
             <div class="bill-header">
@@ -390,44 +459,63 @@
             <button class="close-bill" id="closeBillBtn">Close</button>
         </div>
     </div>
-
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
     <script>
-        // ============ MONGODB BACKEND API ============
-        const API_URL = 'http://localhost:5000/api/items';
-
+        const API_URL = `${API_BASE_URL}/api/items`;
         let allItems = [];
 
-        // Load items on page load
-        window.addEventListener('load', loadItems);
+        // CHECK AUTH ON LOAD
+        window.addEventListener('load', () => {
+            console.log('Page loaded, checking auth...');
+            
+            // Check if user is logged in
+            if (!auth.isLoggedIn()) {
+                console.log('Not logged in, redirecting to login...');
+                alert('⚠️ Please log in to browse items!');
+                window.location.href = 'login.html';
+                return;
+            }
 
+            // Display user info
+            console.log('User logged in:', auth.user);
+            document.getElementById('userName').textContent = auth.user.name;
+            document.getElementById('userEmail').textContent = auth.user.email;
+
+            // Load items
+            loadItems();
+        });
+
+        // LOAD ITEMS FROM API
         async function loadItems() {
-            console.log('Loading items from MongoDB...');
             try {
+                                console.log('Loading items from API...');
                 const response = await fetch(API_URL);
                 const data = await response.json();
                 
-                console.log('Response from backend:', data);
+                console.log('API Response:', data);
                 
                 if (data.success) {
                     allItems = data.data;
                     console.log('Items loaded:', allItems.length);
                     filterItems();
                 } else {
-                    throw new Error('Failed to load items');
+                    throw new Error('Failed to load items from API');
                 }
             } catch (error) {
                 console.error('Error loading items:', error);
                 document.getElementById('resultsGrid').innerHTML = 
-                    '<div class="no-results">Error loading items. Please make sure the backend server is running!</div>';
+                    '<div class="no-results">❌ Error loading items. Backend error: ' + error.message + '</div>';
             }
         }
 
+        // FILTER ITEMS
         function filterItems() {
+            console.log('Filtering items...');
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const categoryFilter = document.getElementById('categoryFilter').value;
             const availabilityFilter = document.getElementById('availabilityFilter').value;
 
-            // Filter items
             let filteredItems = allItems.filter(item => {
                 const matchesSearch = item.name.toLowerCase().includes(searchTerm) || 
                                      (item.description && item.description.toLowerCase().includes(searchTerm));
@@ -437,15 +525,17 @@
                 return matchesSearch && matchesCategory && matchesAvailability;
             });
 
+            console.log('Filtered items count:', filteredItems.length);
             displayItems(filteredItems);
         }
 
+        // DISPLAY ITEMS
         function displayItems(items) {
             const resultsGrid = document.getElementById('resultsGrid');
             const resultsHeader = document.getElementById('resultsHeader');
             
             if (items.length === 0) {
-                resultsGrid.innerHTML = '<div class="no-results">No items found. Try a different search or be the first to list an item!</div>';
+                resultsGrid.innerHTML = '<div class="no-results">No items found. Try a different search!</div>';
                 resultsHeader.textContent = '';
                 return;
             }
@@ -454,6 +544,8 @@
 
             resultsGrid.innerHTML = items.map((item) => {
                 const dateAdded = new Date(item.dateAdded || item.createdAt).toLocaleDateString();
+                const sellerName = item.userId && item.userId.name ? item.userId.name : 'Unknown Seller';
+                const sellerEmail = item.userId && item.userId.email ? item.userId.email : '';
                 
                 return `
                 <div class="item-card">
@@ -461,14 +553,15 @@
                     <div class="item-details">
                         <span class="item-category">${item.category}</span>
                         <div class="item-name">${item.name}</div>
-                        ${item.description ? `<div class="item-description">${item.description.substring(0, 80)}${item.description.length > 80 ? '...' : ''}</div>` : ''}
+                        ${item.description ? `<div class="item-description">${item.description.substring(0, 80)}${item.description.length > 80 ? '...' : ''}</div>` : '<div class="item-description">-</div>'}
+                        <div class="item-seller">👤 ${sellerName}</div>
                         <div class="item-price">₹${item.price}/day</div>
                         <span class="item-availability ${item.availability}">
                             ${item.availability === 'available' ? '✓ Available' : '✗ Not Available'}
                         </span>
-                        <div class="item-date">Listed on ${dateAdded}</div>
+                        <div class="item-date">📅 ${dateAdded}</div>
                         <button class="bill-btn" onclick='generateBill(${JSON.stringify(item).replace(/'/g, "&apos;")})'>
-                            Generate Bill
+                            💰 Generate Bill
                         </button>
                     </div>
                 </div>
@@ -476,17 +569,24 @@
             }).join('');
         }
 
+        // GENERATE BILL
         function generateBill(item) {
+            console.log('Generating bill for:', item);
             const modal = document.getElementById('billModal');
             const billDetails = document.getElementById('billDetails');
             
-            const deposit = Math.round(item.price * 0.5); // 50% deposit
+            const deposit = Math.round(item.price * 0.5);
             const total = parseInt(item.price) + deposit;
+            const sellerName = item.userId && item.userId.name ? item.userId.name : 'Unknown';
             
             billDetails.innerHTML = `
                 <div class="bill-item">
                     <span>Item Name:</span>
                     <strong>${item.name}</strong>
+                </div>
+                <div class="bill-item">
+                    <span>Seller:</span>
+                    <strong>${sellerName}</strong>
                 </div>
                 <div class="bill-item">
                     <span>Category:</span>
@@ -497,7 +597,7 @@
                     <strong>₹${item.price}</strong>
                 </div>
                 <div class="bill-item">
-                    <span>Security Deposit:</span>
+                    <span>Security Deposit (50%):</span>
                     <strong>₹${deposit}</strong>
                 </div>
                 <div class="bill-total">
@@ -509,25 +609,50 @@
             modal.style.display = 'flex';
         }
 
+        // CLOSE BILL
         function closeBill() {
             document.getElementById('billModal').style.display = 'none';
         }
 
-        // Event listeners
-        document.getElementById('searchBtn').addEventListener('click', filterItems);
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        // EVENT LISTENERS
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            console.log('Search button clicked');
+            filterItems();
+        });
+
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
+                console.log('Enter key pressed');
                 filterItems();
             }
         });
-        document.getElementById('categoryFilter').addEventListener('change', filterItems);
-        document.getElementById('availabilityFilter').addEventListener('change', filterItems);
+
+        document.getElementById('categoryFilter').addEventListener('change', () => {
+            console.log('Category filter changed');
+            filterItems();
+        });
+
+        document.getElementById('availabilityFilter').addEventListener('change', () => {
+            console.log('Availability filter changed');
+            filterItems();
+        });
+
         document.getElementById('closeBillBtn').addEventListener('click', closeBill);
-        document.getElementById('billModal').addEventListener('click', function(e) {
-            if (e.target === this) {
+
+        document.getElementById('billModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('billModal')) {
                 closeBill();
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if (auth.isLoggedIn()) {
+                auth.logout();
+            } else {
+                window.location.href = 'login.html';
             }
         });
     </script>
 </body>
 </html>
+

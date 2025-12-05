@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Details - RentHub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 28px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .item-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .item-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .item-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            color: #ccc;
+        }
+
+        .item-info h2 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .item-price {
+            font-size: 36px;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .item-category {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .availability-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .not-available {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .item-description {
+            color: #666;
+            line-height: 1.6;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .seller-section {
+            border-top: 2px solid #f0f0f0;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .seller-card {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .seller-card:hover {
+            background: #f0f0f0;
+        }
+
+        .seller-pic {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #667eea;
+        }
+
+        .seller-info h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .seller-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .rating {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .reviews-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .reviews-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .review-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 10px;
+            font-size: 32px;
+            cursor: pointer;
+        }
+
+        .rating-input span {
+            color: #ccc;
+            transition: color 0.2s;
+        }
+
+        .rating-input span:hover,
+        .rating-input span.active {
+            color: #ffc107;
+        }
+
+        .btn-submit {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+        }
+
+        .btn-submit:hover {
+            background: #5568d3;
+        }
+
+        .review-card {
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .reviewer-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .review-rating {
+            color: #ffc107;
+        }
+
+        .review-comment {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .review-date {
+            color: #999;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .no-reviews {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        @media (max-width: 768px) {
+            .item-main {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 Item Details</h1>
+            <a href="index.html" class="btn btn-secondary">🏠 Back to Home</a>
+        </div>
+
+        <div id="alertBox" class="alert"></div>
+
+        <div id="loadingDiv" class="loading">
+            Loading item details...
+        </div>
+
+        <div id="itemContent" style="display: none;">
+            <div class="item-container">
+                <div class="item-main">
+                    <div>
+                        <div id="itemImage" class="item-image">📦</div>
+                    </div>
+                    <div class="item-info">
+                        <h2 id="itemName">Item Name</h2>
+                        <div class="item-price" id="itemPrice">₹0/day</div>
+                        <span class="item-category" id="itemCategory">Category</span>
+                        <span class="availability-badge" id="itemAvailability"></span>
+                        <div class="item-description" id="itemDescription">
+                            Item description will appear here...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="seller-section">
+                    <h3 style="margin-bottom: 15px; color: #333;">👤 Listed by</h3>
+                    <div class="seller-card" id="sellerCard">
+                        <div class="seller-pic" id="sellerPic">👤</div>
+                        <div class="seller-info">
+                            <h4 id="sellerName">Seller Name</h4>
+                            <p id="sellerPhone">📞 Phone</p>
+                            <p class="rating">⭐ <span id="sellerRating">0.0</span> (<span id="sellerReviews">0</span> reviews)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reviews-section">
+                <h3>⭐ Reviews & Ratings</h3>
+                
+                <div id="reviewFormContainer" style="display: none;">
+                    <div class="review-form">
+                        <h4 style="margin-bottom: 15px; color: #333;">Leave a Review</h4>
+                        <form id="reviewForm">
+                            <div class="form-group">
+                                <label>Rating *</label>
+                                <div class="rating-input" id="ratingInput">
+                                    <span data-rating="1">⭐</span>
+                                    <span data-rating="2">⭐</span>
+                                    <span data-rating="3">⭐</span>
+                                    <span data-rating="4">⭐</span>
+                                    <span data-rating="5">⭐</span>
+                                </div>
+                                <input type="hidden" id="selectedRating" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="reviewComment">Comment (optional)</label>
+                                <textarea id="reviewComment" placeholder="Share your experience..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-submit">Submit Review</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="reviewsList"></div>
+                <div id="noReviews" class="no-reviews" style="display: none;">
+                    No reviews yet. Be the first to review!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5000/api' 
+            : 'https://renthub-ndky.onrender.com/api';
+
+        const token = localStorage.getItem('token');
+        const urlParams = new URLSearchParams(window.location.search);
+        const itemId = urlParams.get('id');
+
+        if (!itemId) {
+            alert('Item ID not provided');
+            window.location.href = 'index.html';
+        }
+
+        let currentItem = null;
+        let selectedRating = 0;
+
+        // Rating input functionality
+        document.getElementById('ratingInput').addEventListener('click', (e) => {
+            if (e.target.dataset.rating) {
+                selectedRating = parseInt(e.target.dataset.rating);
+                document.getElementById('selectedRating').value = selectedRating;
+                updateRatingDisplay();
+            }
+        });
+
+        function updateRatingDisplay() {
+            const stars = document.querySelectorAll('#ratingInput span');
+            stars.forEach((star, index) => {
+                if (index < selectedRating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // Load item details
+        async function loadItemDetails() {
+            try {
+                const response = await fetch(`${API_URL}/items/${itemId}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    currentItem = result.data;
+                    const item = result.data;
+
+                    document.getElementById('itemName').textContent = item.name;
+                    document.getElementById('itemPrice').textContent = `₹${item.price}/day`;
+                    document.getElementById('itemCategory').textContent = item.category;
+                    document.getElementById('itemDescription').textContent = item.description;
+
+                    const availBadge = document.getElementById('itemAvailability');
+                    availBadge.className = `availability-badge ${item.availability}`;
+                    availBadge.textContent = item.availability === 'available' ? '✅ Available' : '❌ Not Available';
+
+                    if (item.photo) {
+                        document.getElementById('itemImage').innerHTML = 
+                            `<img src="${item.photo}" alt="${item.name}" class="item-image">`;
+                    }
+
+                    // Seller info
+                    if (item.userId) {
+                        document.getElementById('sellerName').textContent = item.userId.name;
+                        document.getElementById('sellerPhone').textContent = `📞 ${item.userId.phone}`;
+                        document.getElementById('sellerRating').textContent = item.userId.averageRating || '0.0';
+                        document.getElementById('sellerReviews').textContent = item.userId.totalReviews || 0;
+
+                        if (item.userId.profilePic) {
+                            document.getElementById('sellerPic').innerHTML = 
+                                `<img src="${item.userId.profilePic}" alt="${item.userId.name}" class="seller-pic">`;
+                        }
+
+                        document.getElementById('sellerCard').onclick = () => {
+                            window.location.href = `seller-profile.html?id=${item.userId._id}`;
+                        };
+
+                        // Show review form only if user is logged in and not the owner
+                        if (token) {
+                            const userData = JSON.parse(atob(token.split('.')[1]));
+                            if (userData.userId !== item.userId._id) {
+                                document.getElementById('reviewFormContainer').style.display = 'block';
+                            }
+                        }
+                    }
+
+                    document.getElementById('loadingDiv').style.display = 'none';
+                    document.getElementById('itemContent').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error loading item:', error);
+                showAlert('Error loading item details', 'error');
+            }
+        }
+
+        // Load reviews
+        async function loadReviews() {
+            try {
+                const response = await fetch(`${API_URL}/items/${itemId}/reviews`);
+                const result = await response.json();
+
+                if (result.success) {
+                    const reviews = result.data;
+                    const reviewsList = document.getElementById('reviewsList');
+
+                    if (reviews.length === 0) {
+                        document.getElementById('noReviews').style.display = 'block';
+                    } else {
+                        reviewsList.innerHTML = reviews.map(review => `
+                            <div class="review-card">
+                                <div class="review-header">
+                                    <span class="reviewer-name">${escapeHtml(review.buyerId.name)}</span>
+                                    <span class="review-rating">${'⭐'.repeat(review.rating)}</span>
+                                </div>
+                                <div class="review-comment">${escapeHtml(review.comment || 'No comment')}</div>
+                                <div class="review-date">${new Date(review.createdAt).toLocaleDateString()}</div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+            }
+        }
+
+        // Submit review
+        document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!token) {
+                showAlert('Please login to leave a review', 'error');
+                return;
+            }
+
+            if (selectedRating === 0) {
+                showAlert('Please select a rating', 'error');
+                return;
+            }
+
+            const reviewData = {
+                rating: selectedRating,
+                comment: document.getElementById('reviewComment').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/items/${itemId}/reviews`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(reviewData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('Review submitted successfully! 🎉', 'success');
+                    document.getElementById('reviewForm').reset();
+                    selectedRating = 0;
+                    updateRatingDisplay();
+                    setTimeout(() => {
+                        loadReviews();
+                        loadItemDetails();
+                    }, 1000);
+                } else {
+                    showAlert(result.message || 'Failed to submit review', 'error');
+                }
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                showAlert('Error submitting review', 'error');
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type}`;
+            alertBox.style.display = 'block';
+            setTimeout(() => alertBox.style.display = 'none', 4000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load data
+        loadItemDetails();
+        loadReviews();
+    </script>
+</body>
+</html>

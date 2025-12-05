@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - RentHub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 28px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .profile-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .profile-pic-container {
+            position: relative;
+        }
+
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #667eea;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #667eea;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 30px;
+            margin-top: 15px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .rating {
+            color: #ffc107;
+            font-size: 18px;
+        }
+
+        .form-section {
+            margin-top: 20px;
+        }
+
+        .form-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-update {
+            background: #28a745;
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+        }
+
+        .btn-update:hover {
+            background: #218838;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-stats {
+                justify-content: center;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧑‍💼 My Profile</h1>
+            <div class="nav-buttons">
+                <a href="index.html" class="btn btn-secondary">🏠 Home</a>
+                <a href="my-items.html" class="btn btn-primary">📦 My Listings</a>
+            </div>
+        </div>
+
+        <div id="alertBox" class="alert"></div>
+        
+        <div id="loadingDiv" class="loading">
+            <h3>Loading your profile...</h3>
+        </div>
+
+        <div id="profileContent" style="display: none;">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-pic-container">
+                        <div class="profile-pic" id="profilePicDisplay">
+                            👤
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <h2 id="displayName">Your Name</h2>
+                        <p id="displayEmail" style="color: #666; margin-bottom: 5px;">email@example.com</p>
+                        <p id="displayPhone" style="color: #666;">+91 1234567890</p>
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <div class="stat-value" id="totalItems">0</div>
+                                <div class="stat-label">Items Listed</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value rating">
+                                    ⭐ <span id="avgRating">0.0</span>
+                                </div>
+                                <div class="stat-label">Average Rating</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="totalReviews">0</div>
+                                <div class="stat-label">Reviews</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>✏️ Edit Profile</h3>
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="name">Full Name *</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bio">Bio / About You</label>
+                            <textarea id="bio" placeholder="Tell others about yourself..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePic">Profile Picture URL (optional)</label>
+                            <input type="url" id="profilePic" placeholder="https://example.com/image.jpg">
+                            <small style="color: #666; display: block; margin-top: 5px;">
+                                Paste an image URL or leave empty for default avatar
+                            </small>
+                        </div>
+                        <button type="submit" class="btn btn-update">💾 Update Profile</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5000/api' 
+            : 'https://renthub-ndky.onrender.com/api';
+
+        // Check authentication
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        // Load profile data
+        async function loadProfile() {
+            try {
+                const response = await fetch(`${API_URL}/profile/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    const user = result.data;
+                    
+                    // Display profile info
+                    document.getElementById('displayName').textContent = user.name;
+                    document.getElementById('displayEmail').textContent = user.email;
+                    document.getElementById('displayPhone').textContent = user.phone;
+                    document.getElementById('totalItems').textContent = user.totalItemsListed || 0;
+                    document.getElementById('avgRating').textContent = user.averageRating || '0.0';
+                    document.getElementById('totalReviews').textContent = user.totalReviews || 0;
+
+                    // Profile picture
+                    if (user.profilePic) {
+                        document.getElementById('profilePicDisplay').innerHTML = 
+                            `<img src="${user.profilePic}" alt="Profile" class="profile-pic">`;
+                    }
+
+                    // Fill form
+                    document.getElementById('name').value = user.name;
+                    document.getElementById('phone').value = user.phone;
+                    document.getElementById('bio').value = user.bio || '';
+                    document.getElementById('profilePic').value = user.profilePic || '';
+
+                    // Show content
+                    document.getElementById('loadingDiv').style.display = 'none';
+                    document.getElementById('profileContent').style.display = 'block';
+                } else {
+                    showAlert('Failed to load profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                showAlert('Error loading profile. Please try again.', 'error');
+            }
+        }
+
+        // Update profile
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const updateData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                bio: document.getElementById('bio').value,
+                profilePic: document.getElementById('profilePic').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('Profile updated successfully! 🎉', 'success');
+                    // Reload profile to show updated data
+                    setTimeout(() => loadProfile(), 1000);
+                } else {
+                    showAlert(result.message || 'Failed to update profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                showAlert('Error updating profile. Please try again.', 'error');
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type}`;
+            alertBox.style.display = 'block';
+            
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 4000);
+        }
+
+        // Load profile on page load
+        loadProfile();
+    </script>
+</body>
+</html>

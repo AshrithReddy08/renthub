@@ -74,7 +74,7 @@ const itemSchema = new mongoose.Schema({
   category: { type: String, required: true },
   availability: { 
     type: String, 
-    enum: ['available', 'unavailable'], 
+    enum: ['available', 'not-available'], 
     default: 'available' 
   },
   price: { type: Number, required: true },
@@ -293,38 +293,39 @@ app.get('/api/items/seller/my-items', authenticateToken, async (req, res) => {
   }
 });
 
-// Update item (protected route)
+// ITEM ROUTES - Update item (protected route)
 app.put('/api/items/:id', authenticateToken, async (req, res) => {
   try {
     const item = await Item.findById(req.params.id);
-    
     if (!item) {
       return res.status(404).json({ success: false, message: 'Item not found' });
     }
 
     // Check if user owns the item
-    if (item.userId.toString() !== req.user.userId) {
+    if (item.userId.toString() !== req.user.userId.toString()) {
       return res.status(403).json({ success: false, message: 'Unauthorized' });
     }
 
     const { name, description, category, availability, price, photo } = req.body;
 
-    item.name = name || item.name;
-    item.description = description || item.description;
-    item.category = category || item.category;
-    item.availability = availability || item.availability;
-    item.price = price || item.price;
+    // Update fields
+    if (name) item.name = name;
+    if (description) item.description = description;
+    if (category) item.category = category;
+    if (availability) item.availability = availability;  // ✅ This will accept 'not-available'
+    if (price) item.price = price;
     if (photo) item.photo = photo;
+
     item.updatedAt = Date.now();
-
     await item.save();
-    console.log('✅ Item updated:', item.name);
 
+    console.log('Item updated:', item.name);
     res.json({ 
       success: true, 
       message: 'Item updated successfully',
       data: item 
     });
+
   } catch (error) {
     console.error('Error updating item:', error);
     res.status(500).json({ success: false, message: 'Error updating item' });

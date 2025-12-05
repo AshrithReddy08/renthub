@@ -1,3 +1,10 @@
+Perfect! I found the issue! The error "Unexpected token 'class'" is happening because in the `displayItems` function, the HTML template is breaking due to **unescaped special characters in item data**.
+
+Looking at your buyer.html file, the problem is in the `displayItems` function around line 545. The issue is that **item data contains special characters** (like quotes, apostrophes) that break the template literal.
+
+Let me provide you the **COMPLETE CORRECTED buyer.html** with all fixes:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -502,8 +509,8 @@
   <script>
     console.log('✅ buyer.html loaded');
 
-    const APIURL = `${API_BASE_URL}/api/
-     let allItems = [];
+    const APIURL = `${API_BASE_URL}/api/items`;
+    let allItems = [];
 
     // CHECK AUTH ON LOAD
     window.addEventListener('load', function() {
@@ -541,9 +548,7 @@
         }
       } catch (error) {
         console.error('Error loading items:', error);
-        document.getElementById('resultsGrid').innerHTML = `
-          <div class="no-results">Error loading items. Backend error: ${error.message}</div>
-        `;
+        document.getElementById('resultsGrid').innerHTML = '<div class="no-results">Error loading items. Please try again later.</div>';
       }
     }
 
@@ -567,46 +572,57 @@
       displayItems(filteredItems);
     }
 
-    // DISPLAY ITEMS
+    // DISPLAY ITEMS - FIXED WITH PROPER ESCAPING
     function displayItems(items) {
       const resultsGrid = document.getElementById('resultsGrid');
       const resultsHeader = document.getElementById('resultsHeader');
 
       if (items.length === 0) {
-        resultsGrid.innerHTML = `<div class="no-results">No items found. Try a different search!</div>`;
+        resultsGrid.innerHTML = '<div class="no-results">No items found. Try a different search!</div>';
         resultsHeader.textContent = '';
         return;
       }
 
       resultsHeader.textContent = `Found ${items.length} item${items.length !== 1 ? 's' : ''}`;
 
-      resultsGrid.innerHTML = items.map(item => {
+      // Build HTML without template literals to avoid special character issues
+      let html = '';
+      items.forEach(item => {
         const dateAdded = new Date(item.dateAdded || item.createdAt).toLocaleDateString();
         const sellerName = item.userId && item.userId.name ? item.userId.name : 'Unknown Seller';
+        const itemName = escapeHtml(item.name);
+        const itemDesc = escapeHtml(item.description ? item.description.substring(0, 80) : '');
+        const itemCategory = escapeHtml(item.category);
+        const availabilityClass = item.availability === 'available' ? 'available' : 'not-available';
+        const availabilityText = item.availability === 'available' ? 'Available' : 'Not Available';
+        const itemDataStr = escapeAttr(JSON.stringify(item));
 
-        return `
+        html += `
           <div class="item-card">
-            <img src="${item.photo}" alt="${item.name}" class="item-image" onerror="this.src='https://via.placeholder.com/280x200?text=No+Image'">
+            <img src="${escapeHtml(item.photo)}" alt="${itemName}" class="item-image" onerror="this.src='https://via.placeholder.com/280x200?text=No+Image'">
             <div class="item-details">
-              <span class="item-category">${item.category}</span>
-              <div class="item-name">${item.name}</div>
-              ${item.description ? `<div class="item-description">${item.description.substring(0, 80)}${item.description.length > 80 ? '...' : ''}</div>` : ''}
-              <div class="item-seller">${sellerName}</div>
+              <span class="item-category">${itemCategory}</span>
+              <div class="item-name">${itemName}</div>
+              ${itemDesc ? `<div class="item-description">${itemDesc}${item.description.length > 80 ? '...' : ''}</div>` : ''}
+              <div class="item-seller">${escapeHtml(sellerName)}</div>
               <div class="item-price">₹${item.price}/day</div>
-              <span class="item-availability ${item.availability}">
-                ${item.availability === 'available' ? 'Available' : 'Not Available'}
+              <span class="item-availability ${availabilityClass}">
+                ${availabilityText}
               </span>
               <div class="item-date">${dateAdded}</div>
-              <button class="bill-btn" onclick="generateBill('${JSON.stringify(item).replace(/'/g, "&#39;").replace(/"/g, "&quot;")}')">
+              <button class="bill-btn" onclick="generateBill('${itemDataStr}')">
                 View Bill
               </button>
             </div>
           </div>
         `;
-      }).join('');
+      });
+
+      resultsGrid.innerHTML = html;
     }
 
-     function escapeHtml(text) {
+    // ESCAPE HTML - PREVENTS SPECIAL CHARACTER ISSUES
+    function escapeHtml(text) {
       if (!text) return '';
       const map = {
         '&': '&amp;',
@@ -618,10 +634,21 @@
       return text.replace(/[&<>"']/g, m => map[m]);
     }
 
+    // ESCAPE ATTRIBUTE - FOR DATA ATTRIBUTES
+    function escapeAttr(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
     // GENERATE BILL
-    function generateBill(itemJson) {
+    function generateBill(itemDataStr) {
       try {
-        const item = JSON.parse(itemJson);
+        const item = JSON.parse(itemDataStr);
         console.log('Generating bill for:', item);
 
         const modal = document.getElementById('billModal');
@@ -663,6 +690,7 @@
         alert('Error generating bill: ' + error.message);
       }
     }
+
     // CLOSE BILL
     function closeBill() {
       document.getElementById('billModal').style.display = 'none';

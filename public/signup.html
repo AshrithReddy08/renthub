@@ -1,343 +1,396 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - RentHub</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - RentHub</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
 
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            width: 100%;
-            animation: slideUp 0.6s ease-out;
-        }
+    .container {
+      max-width: 450px;
+      width: 100%;
+    }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+    .logo h1 {
+      color: white;
+      font-size: 32px;
+      margin-bottom: 5px;
+    }
 
-        .logo {
-            font-size: 2.5rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-        }
+    .logo p {
+      color: rgba(255, 255, 255, 0.8);
+    }
 
-        .tagline {
-            color: #666;
-            font-size: 0.9rem;
-        }
+    .card {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+    .card h2 {
+      color: #333;
+      margin-bottom: 10px;
+      text-align: center;
+    }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
+    .card p {
+      color: #666;
+      margin-bottom: 30px;
+      text-align: center;
+      font-size: 14px;
+    }
 
-        input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
+    .form-group {
+      margin-bottom: 18px;
+    }
 
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+      font-size: 14px;
+    }
 
-        .password-match {
-            display: none;
-            margin-top: 5px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
 
-        .password-match.match {
-            color: #4caf50;
-            display: block;
-        }
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.2);
+    }
 
-        .password-match.nomatch {
-            color: #f44336;
-            display: block;
-        }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
 
-        .submit-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-            margin-top: 10px;
-        }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+    }
 
-        .submit-btn:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
 
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #
+.login-link {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+    }
 
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-        }
+    .login-link p {
+      color: #666;
+      margin-bottom: 0;
+    }
 
-        .login-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
+    .login-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+    }
 
-        .login-link a:hover {
-            text-decoration: underline;
-        }
+    .login-link a:hover {
+      text-decoration: underline;
+    }
 
-        .message {
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 600;
-            display: none;
-        }
+    .alert {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+      font-size: 14px;
+    }
 
-        .success-message {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
+    .alert.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
 
-        .error-message {
-            background: #ffebee;
-            color: #c62828;
-        }
+    .alert.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
 
-        .loading {
-            display: none;
-            text-align: center;
-            color: #667eea;
-            font-weight: 600;
-        }
+    .back-link {
+      text-align: center;
+      margin-top: 15px;
+    }
 
-        @media (max-width: 600px) {
-            .container {
-                padding: 30px 20px;
-            }
+    .back-link a {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+    }
 
-            .logo {
-                font-size: 2rem;
-            }
-        }
-    </style>
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .spinner {
+      border: 3px solid rgba(102, 126, 234, 0.3);
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .password-requirements {
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .password-requirements li {
+      margin-left: 20px;
+      margin-bottom: 5px;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        padding: 25px;
+      }
+
+      .logo h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">🏪 RentHub</div>
-            <div class="tagline">Create your account</div>
-        </div>
-
-        <div id="message" class="message"></div>
-
-        <form id="signupForm">
-            <div class="form-group">
-                <label for="name">Full Name *</label>
-                <input type="text" id="name" placeholder="Enter your full name" required>
-            </div>
-
-            <div class="form-group">
-                <label for="email">Email Address *</label>
-                <input type="email" id="email" placeholder="Enter your email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="phone">Phone Number (Optional)</label>
-                <input type="tel" id="phone" placeholder="Enter your phone number">
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password *</label>
-                <input type="password" id="password" placeholder="At least 6 characters" required>
-            </div>
-
-            <div class="form-group">
-                <label for="confirmPassword">Confirm Password *</label>
-                <input type="password" id="confirmPassword" placeholder="Re-enter your password" required>
-                <div id="passwordMatch" class="password-match"></div>
-            </div>
-
-            <button type="submit" class="submit-btn" id="submitBtn">
-                ✨ Create Account
-            </button>
-
-            <div class="loading" id="loading">
-                ⏳ Creating your account...
-            </div>
-        </form>
-
-        <div class="login-link">
-            Already have an account? <a href="login.html">Sign in here</a>
-        </div>
+  <div class="container">
+    <!-- Logo -->
+    <div class="logo">
+      <h1>🏪 RentHub</h1>
+      <p>Rent Anything, Anytime</p>
     </div>
-    <script src="config.js"></script>
-    <script>
-        const API_URL = '${API_BASE_URL}/api/auth';
 
-        const form = document.getElementById('signupForm');
-        const messageDiv = document.getElementById('message');
-        const passwordInput = document.getElementById('password');
-        const confirmPasswordInput = document.getElementById('confirmPassword');
-        const passwordMatchDiv = document.getElementById('passwordMatch');
-        const submitBtn = document.getElementById('submitBtn');
-        const loadingDiv = document.getElementById('loading');
+    <!-- Card -->
+    <div class="card">
+      <h2>Create Account</h2>
+      <p>Join RentHub to start renting or selling items</p>
 
-        // Check password match in real-time
-        [passwordInput, confirmPasswordInput].forEach(input => {
-            input.addEventListener('input', () => {
-                if (passwordInput.value && confirmPasswordInput.value) {
-                    if (passwordInput.value === confirmPasswordInput.value) {
-                        passwordMatchDiv.className = 'password-match match';
-                        passwordMatchDiv.textContent = '✅ Passwords match';
-                    } else {
-                        passwordMatchDiv.className = 'password-match nomatch';
-                        passwordMatchDiv.textContent = '❌ Passwords do not match';
-                    }
-                } else {
-                    passwordMatchDiv.className = 'password-match';
-                }
-            });
-        });
+      <!-- Alert -->
+      <div id="alertBox" class="alert"></div>
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+      <!-- Form -->
+      <form onsubmit="handleSignup(event)">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="John Doe" required>
+        </div>
 
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="your.email@example.com" required>
+        </div>
 
-            // Validation
-            if (password !== confirmPassword) {
-                showMessage('Passwords do not match!', 'error');
-                return;
-            }
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" placeholder="9876543210" required pattern="[0-9]{10}">
+        </div>
 
-            if (password.length < 6) {
-                showMessage('Password must be at least 6 characters!', 'error');
-                return;
-            }
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" required minlength="6">
+          <div class="password-requirements">
+            <ul>
+              <li>At least 6 characters long</li>
+              <li>Use a mix of letters and numbers</li>
+            </ul>
+          </div>
+        </div>
 
-            submitBtn.disabled = true;
-            loadingDiv.style.display = 'block';
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" placeholder="••••••••" required>
+        </div>
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name,
-                        email,
-                        phone,
-                        password,
-                        confirmPassword
-                    })
-                });
+        <button type="submit" class="btn" id="submitBtn">
+          <span class="btn-text">Create Account</span>
+          <span class="loading" id="loadingSpinner">
+            <div class="spinner"></div>
+          </span>
+        </button>
+      </form>
 
-                const data = await response.json();
+      <!-- Login Link -->
+      <div class="login-link">
+        <p>Already have an account? <a href="login.html">Login</a></p>
+      </div>
+    </div>
 
-                if (data.success) {
-                    // Save token
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
+    <!-- Back Link -->
+    <div class="back-link">
+      <a href="index.html">← Back to Home</a>
+    </div>
+  </div>
 
-                    showMessage('✅ Account created successfully! Redirecting...', 'success');
+  <!-- Scripts -->
+  <script src="config.js"></script>
+  <script src="auth.js"></script>
 
-                    // Redirect after 2 seconds
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 2000);
-                } else {
-                    showMessage(`❌ ${data.message}`, 'error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showMessage('❌ Error creating account. Please try again.', 'error');
-            } finally {
-                submitBtn.disabled = false;
-                loadingDiv.style.display = 'none';
-            }
-        });
+  <script>
+    console.log('✅ signup.html loaded');
 
-        function showMessage(text, type) {
-            messageDiv.textContent = text;
-            messageDiv.className = `message ${type}-message`;
-            messageDiv.style.display = 'block';
+    // Handle signup
+    async function handleSignup(event) {
+      event.preventDefault();
 
-            if (type === 'success') {
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                }, 3000);
-            }
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      // Validate phone number
+      if (phone.length !== 10) {
+        showAlert('Phone number must be 10 digits', 'error');
+        return;
+      }
+
+      // Validate passwords match
+      if (password !== confirmPassword) {
+        showAlert('Passwords do not match', 'error');
+        return;
+      }
+
+      // Validate password length
+      if (password.length < 6) {
+        showAlert('Password must be at least 6 characters long', 'error');
+        return;
+      }
+
+      // Show loading
+      document.getElementById('submitBtn').disabled = true;
+      document.getElementById('loadingSpinner').style.display = 'block';
+      document.querySelector('.btn-text').style.display = 'none';
+
+      try {
+        console.log('Attempting signup for:', email);
+
+        const result = await auth.signup(name, email, password, phone);
+
+        if (result.success) {
+          showAlert('Account created successfully! Redirecting...', 'success');
+          console.log('Signup successful, user:', result.user);
+
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1500);
+        } else {
+          showAlert(result.message || 'Signup failed', 'error');
+          console.error('Signup error:', result.message);
         }
-    </script>
+      } catch (error) {
+        console.error('Signup error:', error);
+        showAlert('An error occurred. Please try again.', 'error');
+      } finally {
+        // Hide loading
+        document.getElementById('submitBtn').disabled = false;
+        document.getElementById('loadingSpinner').style.display = 'none';
+        document.querySelector('.btn-text').style.display = 'inline';
+      }
+    }
+
+    // Show alert
+    function showAlert(message, type) {
+      const alertBox = document.getElementById('alertBox');
+      alertBox.textContent = message;
+      alertBox.className = `alert ${type}`;
+      setTimeout(() => {
+        alertBox.className = 'alert';
+      }, 4000);
+    }
+
+    // Real-time password validation
+    document.getElementById('password').addEventListener('input', function() {
+      const confirmPassword = document.getElementById('confirmPassword');
+      if (confirmPassword.value && this.value !== confirmPassword.value) {
+        confirmPassword.style.borderColor = '#ff6b6b';
+      } else {
+        confirmPassword.style.borderColor = '#e0e0e0';
+      }
+    });
+
+    document.getElementById('confirmPassword').addEventListener('input', function() {
+      const password = document.getElementById('password');
+      if (this.value && password.value !== this.value) {
+        this.style.borderColor = '#ff6b6b';
+      } else {
+        this.style.borderColor = '#e0e0e0';
+      }
+    });
+  </script>
 </body>
+
 </html>

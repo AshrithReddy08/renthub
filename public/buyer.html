@@ -1,658 +1,696 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buyer - Find Items to Rent</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buyer - Find Items to Rent</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-        .logo-nav {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-        }
+    .logo-nav {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white;
+      text-decoration: none;
+    }
 
-        .nav-buttons {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
+    .nav-buttons {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
 
-        .user-info {
-            color: white;
-            text-align: right;
-            margin-right: 15px;
-        }
+    .user-info {
+      color: white;
+      text-align: right;
+      margin-right: 15px;
+    }
 
-        .user-name {
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
+    .user-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
 
-        .user-email {
-            font-size: 0.75rem;
-            opacity: 0.9;
-        }
+    .user-email {
+      font-size: 0.75rem;
+      opacity: 0.9;
+    }
 
-        #logoutBtn {
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid white;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
+    .logoutBtn {
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
 
-        #logoutBtn:hover {
-            background: white;
-            color: #00f2fe;
-        }
+    .logoutBtn:hover {
+      background: white;
+      color: #00f2fe;
+    }
 
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            margin-top: 80px;
-        }
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+      margin-top: 80px;
+    }
 
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
 
-        .back-btn {
-            position: fixed;
-            top: 80px;
-            left: 20px;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.3);
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s;
-            z-index: 10;
-        }
+    .back-btn {
+      position: fixed;
+      top: 80px;
+      left: 20px;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.3s;
+      z-index: 10;
+    }
 
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
 
-        .search-container {
-            max-width: 800px;
-            margin: 0 auto 40px;
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
+    .search-container {
+      max-width: 800px;
+      margin: 0 auto 40px;
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
 
-        .search-box {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
+    .search-box {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
 
-        .search-input {
-            flex: 1;
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
+    .search-input {
+      flex: 1;
+      padding: 15px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
 
-        .search-input:focus {
-            outline: none;
-            border-color: #00f2fe;
-            box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.1);
-        }
+    .search-input:focus {
+      outline: none;
+      border-color: #00f2fe;
+      box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.1);
+    }
 
-        .search-btn {
-            padding: 15px 40px;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
-        }
+    .search-btn {
+      padding: 15px 40px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+    }
 
-        .search-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
-        }
+    .search-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
+    }
 
-        .filters {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-        }
+    .filters {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
 
-        .filter-select {
-            padding: 10px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
+    .filter-select {
+      padding: 10px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
 
-        .results-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+    .filter-select:focus {
+      outline: none;
+      border-color: #00f2fe;
+    }
 
-        .results-header {
-            color: white;
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-        }
+    .results-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-        }
+    .results-header {
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
 
-        .item-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s;
-            animation: fadeIn 0.5s ease-out;
-        }
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+    }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .item-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s;
+      animation: fadeIn 0.5s ease-out;
+    }
 
-        .item-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
-        }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-        .item-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            background: #f0f0f0;
-        }
+    .item-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+    }
 
-        .item-details {
-            padding: 20px;
-        }
+    .item-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: #f0f0f0;
+    }
 
-        .item-category {
-            display: inline-block;
-            padding: 4px 10px;
-            background: #e3f2fd;
-            color: #1976d2;
-            border-radius: 15px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
+    .item-details {
+      padding: 20px;
+    }
 
-        .item-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 10px;
-        }
+    .item-category {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #e3f2fd;
+      color: #1976d2;
+      border-radius: 15px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
 
-        .item-description {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 10px;
-            line-height: 1.4;
-            min-height: 30px;
-        }
+    .item-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 10px;
+    }
 
-        .item-seller {
-            font-size: 0.85rem;
-            color: #00f2fe;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
+    .item-description {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 10px;
+      line-height: 1.4;
+      min-height: 30px;
+    }
 
-        .item-price {
-            font-size: 1.5rem;
-            color: #00f2fe;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
+    .item-seller {
+      font-size: 0.85rem;
+      color: #00f2fe;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
 
-        .item-availability {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
+    .item-price {
+      font-size: 1.5rem;
+      color: #00f2fe;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
 
-        .available {
-            background: #e8f5e9;
-            color: #4caf50;
-        }
+    .item-availability {
+      display: inline-block;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
 
-        .not-available {
-            background: #ffebee;
-            color: #f44336;
-        }
+    .available {
+      background: #e8f5e9;
+      color: #4caf50;
+    }
 
-        .item-date {
-            font-size: 0.8rem;
-            color: #999;
-            margin-bottom: 15px;
-        }
+    .not-available {
+      background: #ffebee;
+      color: #f44336;
+    }
 
-        .bill-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+    .item-date {
+      font-size: 0.8rem;
+      color: #999;
+      margin-bottom: 15px;
+    }
 
-        .bill-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
+    .bill-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
 
-        .no-results {
-            text-align: center;
-            padding: 60px 20px;
-            color: white;
-            font-size: 1.2rem;
-        }
+    .bill-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
 
-        .bill-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
+    .no-results {
+      text-align: center;
+      padding: 60px 20px;
+      color: white;
+      font-size: 1.2rem;
+    }
 
-        .bill-content {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            animation: popUp 0.3s ease-out;
-        }
+    .bill-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
 
-        @keyframes popUp {
-            from {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
+    .bill-content {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      animation: popUp 0.3s ease-out;
+    }
 
-        .bill-header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
-        }
+    @keyframes popUp {
+      from {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
 
-        .bill-header h2 {
-            color: #333;
-            margin-bottom: 5px;
-        }
+    .bill-header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #e0e0e0;
+    }
 
-        .bill-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
+    .bill-header h2 {
+      color: #333;
+      margin-bottom: 5px;
+    }
 
-        .bill-total {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #00f2fe;
-        }
+    .bill-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
 
-        .close-bill {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 20px;
-        }
+    .bill-total {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #00f2fe;
+    }
 
-        @media (max-width: 600px) {
-            .search-box {
-                flex-direction: column;
-            }
-            .header h1 {
-                font-size: 2rem;
-            }
-        }
-    </style>
+    .close-bill {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .search-box {
+        flex-direction: column;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .navbar {
+        padding: 10px 20px;
+        flex-wrap: wrap;
+      }
+
+      .nav-buttons {
+        width: 100%;
+        gap: 10px;
+      }
+
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bill-content {
+        width: 95%;
+        padding: 25px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <div class="navbar">
-        <a href="index.html" class="logo-nav">🏪 RentHub</a>
-        <div class="nav-buttons">
-            <div class="user-info">
-                <div class="user-name" id="userName">User</div>
-                <div class="user-email" id="userEmail">email@example.com</div>
+  <!-- Navbar -->
+  <div class="navbar">
+    <a href="index.html" class="logo-nav">🏪 RentHub</a>
+    <div class="nav-buttons">
+      <div class="user-info">
+        <div class="user-name" id="userName">User</div>
+        <div class="user-email" id="userEmail">email@example.com</div>
+      </div>
+      <button id="logoutBtn" class="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <a href="index.html" class="back-btn">← Back to Home</a>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Find Items to Rent</h1>
+    <p>Search and discover amazing items near you!</p>
+  </div>
+
+  <!-- Search Container -->
+  <div class="search-container">
+    <div class="search-box">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search for items... e.g., camera, drill">
+      <button class="search-btn" id="searchBtn">Search</button>
+    </div>
+
+    <div class="filters">
+      <select class="filter-select" id="categoryFilter">
+        <option value="">All Categories</option>
+        <option value="electronics">Electronics</option>
+        <option value="tools">Tools & Equipment</option>
+        <option value="sports">Sports & Fitness</option>
+        <option value="party">Party & Events</option>
+        <option value="camping">Camping & Outdoor</option>
+        <option value="photography">Photography</option>
+        <option value="books">Books & Media</option>
+        <option value="other">Other</option>
+      </select>
+
+      <select class="filter-select" id="availabilityFilter">
+        <option value="">All Items</option>
+        <option value="available">Available Only</option>
+        <option value="not-available">Not Available</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="results-container">
+    <div class="results-header" id="resultsHeader"></div>
+    <div class="results-grid" id="resultsGrid">
+      <div class="no-results">Loading items...</div>
+    </div>
+  </div>
+
+  <!-- Bill Modal -->
+  <div class="bill-modal" id="billModal">
+    <div class="bill-content">
+      <div class="bill-header">
+        <h2>Rental Bill</h2>
+        <p style="color: #666;">Transaction Summary</p>
+      </div>
+      <div id="billDetails"></div>
+      <button class="close-bill" id="closeBillBtn">Close</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="config.js"></script>
+  <script src="auth.js"></script>
+
+  <script>
+    console.log('✅ buyer.html loaded');
+
+    const APIURL = `${API_BASE_URL}/api/
+     let allItems = [];
+
+    // CHECK AUTH ON LOAD
+    window.addEventListener('load', function() {
+      console.log('buyer.html: checking auth...');
+
+      if (!auth.isLoggedIn()) {
+        alert('Please log in to browse items!');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Display user info
+      const user = auth.getCurrentUser();
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userEmail').textContent = user.email;
+
+      loadItems();
+    });
+
+    // LOAD ITEMS FROM API
+    async function loadItems() {
+      try {
+        console.log('Loading items from API...');
+        const response = await fetch(APIURL);
+        const data = await response.json();
+
+        console.log('API Response:', data);
+
+        if (data.success) {
+          allItems = data.data;
+          console.log('Items loaded:', allItems.length);
+          filterItems();
+        } else {
+          throw new Error('Failed to load items from API');
+        }
+      } catch (error) {
+        console.error('Error loading items:', error);
+        document.getElementById('resultsGrid').innerHTML = `
+          <div class="no-results">Error loading items. Backend error: ${error.message}</div>
+        `;
+      }
+    }
+
+    // FILTER ITEMS
+    function filterItems() {
+      console.log('Filtering items...');
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const categoryFilter = document.getElementById('categoryFilter').value;
+      const availabilityFilter = document.getElementById('availabilityFilter').value;
+
+      let filteredItems = allItems.filter(item => {
+        const matchesSearch = item.name.toLowerCase().includes(searchTerm) ||
+          (item.description && item.description.toLowerCase().includes(searchTerm));
+        const matchesCategory = !categoryFilter || item.category === categoryFilter;
+        const matchesAvailability = !availabilityFilter || item.availability === availabilityFilter;
+
+        return matchesSearch && matchesCategory && matchesAvailability;
+      });
+
+      console.log('Filtered items count:', filteredItems.length);
+      displayItems(filteredItems);
+    }
+
+    // DISPLAY ITEMS
+    function displayItems(items) {
+      const resultsGrid = document.getElementById('resultsGrid');
+      const resultsHeader = document.getElementById('resultsHeader');
+
+      if (items.length === 0) {
+        resultsGrid.innerHTML = `<div class="no-results">No items found. Try a different search!</div>`;
+        resultsHeader.textContent = '';
+        return;
+      }
+
+      resultsHeader.textContent = `Found ${items.length} item${items.length !== 1 ? 's' : ''}`;
+
+      resultsGrid.innerHTML = items.map(item => {
+        const dateAdded = new Date(item.dateAdded || item.createdAt).toLocaleDateString();
+        const sellerName = item.userId && item.userId.name ? item.userId.name : 'Unknown Seller';
+
+        return `
+          <div class="item-card">
+            <img src="${item.photo}" alt="${item.name}" class="item-image" onerror="this.src='https://via.placeholder.com/280x200?text=No+Image'">
+            <div class="item-details">
+              <span class="item-category">${item.category}</span>
+              <div class="item-name">${item.name}</div>
+              ${item.description ? `<div class="item-description">${item.description.substring(0, 80)}${item.description.length > 80 ? '...' : ''}</div>` : ''}
+              <div class="item-seller">${sellerName}</div>
+              <div class="item-price">₹${item.price}/day</div>
+              <span class="item-availability ${item.availability}">
+                ${item.availability === 'available' ? 'Available' : 'Not Available'}
+              </span>
+              <div class="item-date">${dateAdded}</div>
+              <button class="bill-btn" onclick="generateBill('${JSON.stringify(item).replace(/'/g, "&#39;").replace(/"/g, "&quot;")}')">
+                View Bill
+              </button>
             </div>
-            <button id="logoutBtn">Logout</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // GENERATE BILL
+    function generateBill(itemJson) {
+      const item = JSON.parse(itemJson);
+      console.log('Generating bill for:', item);
+
+      const modal = document.getElementById('billModal');
+      const billDetails = document.getElementById('billDetails');
+      const deposit = Math.round(item.price * 0.5);
+      const total = parseInt(item.price) + deposit;
+      const sellerName = item.userId && item.userId.name ? item.userId.name : 'Unknown';
+
+      billDetails.innerHTML = `
+        <div class="bill-item">
+          <span>Item Name</span>
+          <strong>${item.name}</strong>
         </div>
-    </div>
-
-    <a href="index.html" class="back-btn">← Back to Home</a>
-
-    <div class="header">
-        <h1>🛍️ Find Items to Rent</h1>
-        <p>Search and discover amazing items near you!</p>
-    </div>
-
-    <div class="search-container">
-        <div class="search-box">
-            <input type="text" class="search-input" id="searchInput" placeholder="Search for items... (e.g., camera, drill)">
-            <button class="search-btn" id="searchBtn">🔍 Search</button>
+        <div class="bill-item">
+          <span>Seller</span>
+          <strong>${sellerName}</strong>
         </div>
-        <div class="filters">
-            <select class="filter-select" id="categoryFilter">
-                <option value="">All Categories</option>
-                <option value="electronics">Electronics</option>
-                <option value="tools">Tools & Equipment</option>
-                <option value="sports">Sports & Fitness</option>
-                <option value="party">Party & Events</option>
-                <option value="camping">Camping & Outdoor</option>
-                <option value="photography">Photography</option>
-                <option value="books">Books & Media</option>
-                <option value="other">Other</option>
-            </select>
-            <select class="filter-select" id="availabilityFilter">
-                <option value="">All Items</option>
-                <option value="available">Available Only</option>
-                <option value="not-available">Not Available</option>
-            </select>
+        <div class="bill-item">
+          <span>Category</span>
+          <strong>${item.category}</strong>
         </div>
-    </div>
-
-    <div class="results-container">
-        <div class="results-header" id="resultsHeader"></div>
-        <div class="results-grid" id="resultsGrid">
-            <div class="no-results">Loading items...</div>
+        <div class="bill-item">
+          <span>Rental per day</span>
+          <strong>₹${item.price}</strong>
         </div>
-    </div>
-
-    <div class="bill-modal" id="billModal">
-        <div class="bill-content">
-            <div class="bill-header">
-                <h2>📄 Rental Bill</h2>
-                <p style="color: #666;">Transaction Summary</p>
-            </div>
-            <div id="billDetails"></div>
-            <button class="close-bill" id="closeBillBtn">Close</button>
+        <div class="bill-item">
+          <span>Security Deposit (50%)</span>
+          <strong>₹${deposit}</strong>
         </div>
-    </div>
-    <script src="config.js"></script>
-    <script src="auth.js"></script>
-    <script>
-        const API_URL = `${API_BASE_URL}/api/items`;
-        let allItems = [];
+        <div class="bill-total">
+          <span>Total Amount</span>
+          <strong>₹${total}</strong>
+        </div>
+      `;
 
-        // CHECK AUTH ON LOAD
-        window.addEventListener('load', () => {
-            console.log('Page loaded, checking auth...');
-            
-            // Check if user is logged in
-            if (!auth.isLoggedIn()) {
-                console.log('Not logged in, redirecting to login...');
-                alert('⚠️ Please log in to browse items!');
-                window.location.href = 'login.html';
-                return;
-            }
+      modal.style.display = 'flex';
+    }
 
-            // Display user info
-            console.log('User logged in:', auth.user);
-            document.getElementById('userName').textContent = auth.user.name;
-            document.getElementById('userEmail').textContent = auth.user.email;
+    // CLOSE BILL
+    function closeBill() {
+      document.getElementById('billModal').style.display = 'none';
+    }
 
-            // Load items
-            loadItems();
-        });
+    // EVENT LISTENERS
+    document.getElementById('searchBtn').addEventListener('click', function() {
+      console.log('Search button clicked');
+      filterItems();
+    });
 
-        // LOAD ITEMS FROM API
-        async function loadItems() {
-            try {
-                                console.log('Loading items from API...');
-                const response = await fetch(API_URL);
-                const data = await response.json();
-                
-                console.log('API Response:', data);
-                
-                if (data.success) {
-                    allItems = data.data;
-                    console.log('Items loaded:', allItems.length);
-                    filterItems();
-                } else {
-                    throw new Error('Failed to load items from API');
-                }
-            } catch (error) {
-                console.error('Error loading items:', error);
-                document.getElementById('resultsGrid').innerHTML = 
-                    '<div class="no-results">❌ Error loading items. Backend error: ' + error.message + '</div>';
-            }
-        }
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        console.log('Enter key pressed');
+        filterItems();
+      }
+    });
 
-        // FILTER ITEMS
-        function filterItems() {
-            console.log('Filtering items...');
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const categoryFilter = document.getElementById('categoryFilter').value;
-            const availabilityFilter = document.getElementById('availabilityFilter').value;
+    document.getElementById('categoryFilter').addEventListener('change', function() {
+      console.log('Category filter changed');
+      filterItems();
+    });
 
-            let filteredItems = allItems.filter(item => {
-                const matchesSearch = item.name.toLowerCase().includes(searchTerm) || 
-                                     (item.description && item.description.toLowerCase().includes(searchTerm));
-                const matchesCategory = !categoryFilter || item.category === categoryFilter;
-                const matchesAvailability = !availabilityFilter || item.availability === availabilityFilter;
-                
-                return matchesSearch && matchesCategory && matchesAvailability;
-            });
+    document.getElementById('availabilityFilter').addEventListener('change', function() {
+      console.log('Availability filter changed');
+      filterItems();
+    });
 
-            console.log('Filtered items count:', filteredItems.length);
-            displayItems(filteredItems);
-        }
+    document.getElementById('closeBillBtn').addEventListener('click', closeBill);
 
-        // DISPLAY ITEMS
-        function displayItems(items) {
-            const resultsGrid = document.getElementById('resultsGrid');
-            const resultsHeader = document.getElementById('resultsHeader');
-            
-            if (items.length === 0) {
-                resultsGrid.innerHTML = '<div class="no-results">No items found. Try a different search!</div>';
-                resultsHeader.textContent = '';
-                return;
-            }
+    document.getElementById('billModal').addEventListener('click', function(e) {
+      if (e.target === document.getElementById('billModal')) {
+        closeBill();
+      }
+    });
 
-            resultsHeader.textContent = `Found ${items.length} item${items.length > 1 ? 's' : ''}`;
-
-            resultsGrid.innerHTML = items.map((item) => {
-                const dateAdded = new Date(item.dateAdded || item.createdAt).toLocaleDateString();
-                const sellerName = item.userId && item.userId.name ? item.userId.name : 'Unknown Seller';
-                const sellerEmail = item.userId && item.userId.email ? item.userId.email : '';
-                
-                return `
-                <div class="item-card">
-                    <img src="${item.photo}" alt="${item.name}" class="item-image" onerror="this.src='https://via.placeholder.com/280x200?text=No+Image'">
-                    <div class="item-details">
-                        <span class="item-category">${item.category}</span>
-                        <div class="item-name">${item.name}</div>
-                        ${item.description ? `<div class="item-description">${item.description.substring(0, 80)}${item.description.length > 80 ? '...' : ''}</div>` : '<div class="item-description">-</div>'}
-                        <div class="item-seller">👤 ${sellerName}</div>
-                        <div class="item-price">₹${item.price}/day</div>
-                        <span class="item-availability ${item.availability}">
-                            ${item.availability === 'available' ? '✓ Available' : '✗ Not Available'}
-                        </span>
-                        <div class="item-date">📅 ${dateAdded}</div>
-                        <button class="bill-btn" onclick='generateBill(${JSON.stringify(item).replace(/'/g, "&apos;")})'>
-                            💰 Generate Bill
-                        </button>
-                    </div>
-                </div>
-                `;
-            }).join('');
-        }
-
-        // GENERATE BILL
-        function generateBill(item) {
-            console.log('Generating bill for:', item);
-            const modal = document.getElementById('billModal');
-            const billDetails = document.getElementById('billDetails');
-            
-            const deposit = Math.round(item.price * 0.5);
-            const total = parseInt(item.price) + deposit;
-            const sellerName = item.userId && item.userId.name ? item.userId.name : 'Unknown';
-            
-            billDetails.innerHTML = `
-                <div class="bill-item">
-                    <span>Item Name:</span>
-                    <strong>${item.name}</strong>
-                </div>
-                <div class="bill-item">
-                    <span>Seller:</span>
-                    <strong>${sellerName}</strong>
-                </div>
-                <div class="bill-item">
-                    <span>Category:</span>
-                    <strong>${item.category}</strong>
-                </div>
-                <div class="bill-item">
-                    <span>Rental (per day):</span>
-                    <strong>₹${item.price}</strong>
-                </div>
-                <div class="bill-item">
-                    <span>Security Deposit (50%):</span>
-                    <strong>₹${deposit}</strong>
-                </div>
-                <div class="bill-total">
-                    <span>Total Amount:</span>
-                    <strong>₹${total}</strong>
-                </div>
-            `;
-            
-            modal.style.display = 'flex';
-        }
-
-        // CLOSE BILL
-        function closeBill() {
-            document.getElementById('billModal').style.display = 'none';
-        }
-
-        // EVENT LISTENERS
-        document.getElementById('searchBtn').addEventListener('click', () => {
-            console.log('Search button clicked');
-            filterItems();
-        });
-
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                console.log('Enter key pressed');
-                filterItems();
-            }
-        });
-
-        document.getElementById('categoryFilter').addEventListener('change', () => {
-            console.log('Category filter changed');
-            filterItems();
-        });
-
-        document.getElementById('availabilityFilter').addEventListener('change', () => {
-            console.log('Availability filter changed');
-            filterItems();
-        });
-
-        document.getElementById('closeBillBtn').addEventListener('click', closeBill);
-
-        document.getElementById('billModal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('billModal')) {
-                closeBill();
-            }
-        });
-
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            if (auth.isLoggedIn()) {
-                auth.logout();
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
-    </script>
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      if (auth.isLoggedIn()) {
+        auth.logout();
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+  </script>
 </body>
-</html>
 
+</html>

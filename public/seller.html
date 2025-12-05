@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,6 +67,11 @@
       background: #f0f0f0;
     }
 
+    nav a.active {
+      background: #667eea;
+      color: white;
+    }
+
     nav button.logout-btn {
       background: #ff6b6b;
       color: white;
@@ -73,11 +79,6 @@
 
     nav button.logout-btn:hover {
       background: #ff5252;
-    }
-
-    nav a.active {
-      background: #667eea;
-      color: white;
     }
 
     /* Main Card */
@@ -261,6 +262,7 @@
       border-radius: 8px;
       margin-bottom: 20px;
       border-left: 4px solid #667eea;
+      display: none;
     }
 
     .seller-info strong {
@@ -287,16 +289,17 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <!-- Navbar -->
     <nav>
-      <div class="logo">RentHub</div>
+      <div class="logo">🏪 RentHub</div>
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="buyer.html">Browse Items</a>
         <a href="seller.html" class="active">Upload Item</a>
-        <a href="my-items.html">📋 My Items</a>
+        <a href="my-items.html">My Items</a>
         <span id="userName" style="color: #667eea; font-weight: bold;"></span>
         <button class="logout-btn" onclick="logout()">Logout</button>
       </div>
@@ -304,12 +307,12 @@
 
     <!-- Main Card -->
     <div class="card">
-      <h1>📦 Upload Item for Rent</h1>
+      <h1>Upload Item for Rent</h1>
       <p>List your items in the marketplace and start earning by renting them out to your neighbors!</p>
 
       <!-- Seller Info -->
       <div class="seller-info" id="sellerInfo" style="display: none;">
-        <strong>📍 Seller:</strong> <span id="sellerName"></span>
+        <strong>Seller:</strong> <span id="sellerName"></span>
       </div>
 
       <!-- Alert Messages -->
@@ -318,17 +321,17 @@
       <!-- Form -->
       <form onsubmit="handleSubmit(event)">
         <div class="form-group">
-          <label for="itemName">Item Name *</label>
+          <label for="itemName">Item Name</label>
           <input type="text" id="itemName" placeholder="e.g., Mountain Bike, Camera, Laptop" required>
         </div>
 
         <div class="form-group">
-          <label for="itemDescription">Description *</label>
+          <label for="itemDescription">Description</label>
           <textarea id="itemDescription" placeholder="Describe your item in detail (condition, features, etc.)" required></textarea>
         </div>
 
         <div class="form-group">
-          <label for="itemCategory">Category *</label>
+          <label for="itemCategory">Category</label>
           <select id="itemCategory" required>
             <option value="">Select a category</option>
             <option value="electronics">Electronics</option>
@@ -343,19 +346,19 @@
         </div>
 
         <div class="form-group">
-          <label for="itemPrice">Rental Price (₹ per day) *</label>
+          <label for="itemPrice">Rental Price per day (₹)</label>
           <input type="number" id="itemPrice" placeholder="e.g., 500" min="1" required>
         </div>
 
         <div class="form-group">
-          <label for="itemPhoto">Item Photo *</label>
+          <label for="itemPhoto">Item Photo</label>
           <input type="file" id="itemPhoto" accept="image/*" required onchange="previewPhoto()">
           <img id="photoPreview" class="file-preview" alt="Photo preview">
           <small>Upload a clear photo of your item (JPG, PNG recommended)</small>
         </div>
 
         <div class="form-group">
-          <label for="itemAvailability">Availability *</label>
+          <label for="itemAvailability">Availability</label>
           <select id="itemAvailability" required>
             <option value="available">Available</option>
             <option value="not-available">Unavailable</option>
@@ -374,11 +377,18 @@
       </form>
     </div>
   </div>
+
+  <!-- ⚠️ CRITICAL: Load scripts in CORRECT ORDER ⚠️ -->
   <script src="config.js"></script>
   <script src="auth.js"></script>
+
   <script>
+    console.log('✅ seller.html loaded');
+
     // Check authentication on page load
-    window.addEventListener('load', () => {
+    window.addEventListener('load', function() {
+      console.log('seller.html: checking authentication...');
+
       if (!auth.isLoggedIn()) {
         alert('Please login first to list items');
         window.location.href = 'login.html';
@@ -386,8 +396,8 @@
       }
 
       const user = auth.getCurrentUser();
-      document.getElementById('userName').textContent = user.name || 'User';
-      document.getElementById('sellerName').textContent = user.name || 'Seller';
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('sellerName').textContent = user.name;
       document.getElementById('sellerInfo').style.display = 'block';
     });
 
@@ -454,8 +464,8 @@
         }
 
         const result = await response.json();
-        showAlert('✅ Item uploaded successfully! Check "My Items" to manage it.', 'success');
-        
+        showAlert('Item uploaded successfully! Check My Items to manage it.', 'success');
+
         // Reset form
         document.getElementById('itemName').value = '';
         document.getElementById('itemDescription').value = '';
@@ -469,9 +479,8 @@
         setTimeout(() => {
           window.location.href = 'my-items.html';
         }, 2000);
-
       } catch (error) {
-        showAlert('❌ Error: ' + error.message, 'error');
+        showAlert(`Error: ${error.message}`, 'error');
       } finally {
         // Hide loading state
         document.getElementById('submitBtn').disabled = false;
@@ -480,12 +489,12 @@
       }
     }
 
-    // Utility: Convert file to base64
+     // Utility: Convert file to base64
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
-                reader.onerror = reject;
+        reader.onerror = () => reject(reader);
         reader.readAsDataURL(file);
       });
     }
@@ -495,7 +504,6 @@
       const alertBox = document.getElementById('alertBox');
       alertBox.textContent = message;
       alertBox.className = `alert ${type}`;
-
       setTimeout(() => {
         alertBox.className = 'alert';
       }, 4000);
@@ -508,5 +516,6 @@
     }
   </script>
 </body>
+
 </html>
 

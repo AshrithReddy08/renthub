@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,6 +66,11 @@
       background: #f0f0f0;
     }
 
+    nav a.active {
+      background: #667eea;
+      color: white;
+    }
+
     nav button.logout-btn {
       background: #ff6b6b;
       color: white;
@@ -72,11 +78,6 @@
 
     nav button.logout-btn:hover {
       background: #ff5252;
-    }
-
-    nav a.active {
-      background: #667eea;
-      color: white;
     }
 
     .header {
@@ -299,6 +300,7 @@
       display: block;
     }
 
+    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -419,12 +421,34 @@
     .cancel-btn:hover {
       background: #d0d0d0;
     }
+
+    @media (max-width: 600px) {
+      .items-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-content {
+        width: 95%;
+        padding: 20px;
+      }
+
+      nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      nav .nav-links {
+        width: 100%;
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
+    <!-- Navbar -->
     <nav>
-      <div class="logo">RentHub</div>
+      <div class="logo">🏪 RentHub</div>
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="buyer.html">Browse Items</a>
@@ -435,25 +459,30 @@
       </div>
     </nav>
 
+    <!-- Header -->
     <div class="header">
       <h1>My Listed Items</h1>
       <p>Manage all your rental listings. Edit details, toggle availability, or delete items.</p>
-      <a href="seller.html" class="upload-btn">📤 Upload New Item</a>
+      <a href="seller.html" class="upload-btn">Upload New Item</a>
     </div>
 
+    <!-- Alert -->
     <div id="alertBox" class="alert"></div>
 
+    <!-- Loading State -->
     <div id="loadingState" class="loading" style="display: none;">
       <div class="spinner"></div>
       <p>Loading your items...</p>
     </div>
 
+    <!-- Items Grid -->
     <div id="itemsContainer" class="items-grid"></div>
 
+    <!-- Empty State -->
     <div id="emptyState" class="empty-state" style="display: none;">
       <h2>No Items Listed Yet</h2>
       <p>Start by uploading your first item to rent!</p>
-      <a href="seller.html" class="upload-btn">📤 Upload Your First Item</a>
+      <a href="seller.html" class="upload-btn">Upload Your First Item</a>
     </div>
   </div>
 
@@ -464,6 +493,7 @@
         <h2>Edit Item</h2>
         <button class="close-btn" onclick="closeEditModal()">&times;</button>
       </div>
+
       <form onsubmit="saveItemChanges(event)">
         <div class="form-group">
           <label for="editItemName">Item Name</label>
@@ -478,12 +508,12 @@
         <div class="form-group">
           <label for="editItemCategory">Category</label>
           <select id="editItemCategory" required>
-            <option value="">Select Category</option>
+            <option value="Select Category">Select Category</option>
             <option value="electronics">Electronics</option>
             <option value="furniture">Furniture</option>
             <option value="tools">Tools</option>
             <option value="sports">Sports</option>
-            <option value="books">Books</option>
+              <option value="books">Books</option>
             <option value="clothing">Clothing</option>
             <option value="toys">Toys</option>
             <option value="other">Other</option>
@@ -491,7 +521,7 @@
         </div>
 
         <div class="form-group">
-          <label for="editItemPrice">Price (₹/day)</label>
+          <label for="editItemPrice">Price /day</label>
           <input type="number" id="editItemPrice" min="1" required>
         </div>
 
@@ -515,46 +545,45 @@
       </form>
     </div>
   </div>
+
+  <!-- Scripts -->
   <script src="config.js"></script>
   <script src="auth.js"></script>
+
   <script>
+    console.log('✅ my-items.html loaded');
+
     let currentEditingItemId = null;
     let allItems = [];
 
-    // ============== PAGE LOAD ==============
-    window.addEventListener('load', () => {
-      console.log('Page loaded, checking authentication...');
-      
+    // PAGE LOAD
+    window.addEventListener('load', function() {
+      console.log('my-items.html: checking authentication...');
+
       if (!auth.isLoggedIn()) {
-        console.log('Not logged in, redirecting to login...');
         alert('Please login first!');
         window.location.href = 'login.html';
         return;
       }
 
       const user = auth.getCurrentUser();
-      console.log('Current user:', user);
-      document.getElementById('userName').textContent = user.name + ' 👤';
-      
+      document.getElementById('userName').textContent = user.name;
       loadSellerItems();
     });
 
-    // ============== LOAD SELLER'S ITEMS ==============
+    // LOAD SELLER'S ITEMS
     async function loadSellerItems() {
       const loadingState = document.getElementById('loadingState');
       const itemsContainer = document.getElementById('itemsContainer');
       const emptyState = document.getElementById('emptyState');
-      
+
       loadingState.style.display = 'block';
       itemsContainer.innerHTML = '';
       emptyState.style.display = 'none';
 
       try {
         const token = auth.getToken();
-        console.log('Fetching items with token...');
-        
-        const response = await fetch(`${API_BASE_URL}/api/my-items`, {
-
+        const response = await fetch(`${API_BASE_URL}/api/items/seller/my-items`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -562,50 +591,37 @@
           }
         });
 
-        console.log('Response status:', response.status);
-
         if (!response.ok) {
           const errorData = await response.json();
-          console.error('API Error:', errorData);
           throw new Error(errorData.message || 'Failed to load items');
         }
 
         const result = await response.json();
-        console.log('Fetched result:', result);
-        
         loadingState.style.display = 'none';
 
         if (!result.success || !result.data || result.data.length === 0) {
-          console.log('No items found');
           emptyState.style.display = 'block';
           return;
         }
 
         allItems = result.data;
-
-        // Render items
         itemsContainer.innerHTML = allItems.map((item, index) => `
           <div class="item-card" data-item-index="${index}">
-            <img src="${item.photo}" alt="${escapeHtml(item.name)}" class="item-image" 
-                 onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+            <img src="${item.photo}" alt="${escapeHtml(item.name)}" class="item-image" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
             <div class="item-details">
               <div class="item-name">${escapeHtml(item.name)}</div>
               <div class="item-description">${escapeHtml(item.description)}</div>
               <span class="item-category">${escapeHtml(item.category)}</span>
               <div class="item-price">₹${item.price}/day</div>
               <span class="availability ${item.availability === 'available' ? 'available' : 'not-available'}">
-                ${item.availability === 'available' ? '✅ Available' : '❌ Not Available'}
+                ${item.availability === 'available' ? 'Available' : 'Not Available'}
               </span>
               <div class="item-actions">
-                <button class="btn edit-btn" onclick="editItem(${index})">
-                  ✏️ Edit
-                </button>
+                <button class="btn edit-btn" onclick="editItem(${index})">Edit</button>
                 <button class="btn toggle-btn" onclick="toggleAvailability('${item._id}', '${item.availability === 'available' ? 'not-available' : 'available'}')">
-                  ${item.availability === 'available' ? '🔒 Make Unavailable' : '🔓 Make Available'}
+                  ${item.availability === 'available' ? 'Make Unavailable' : 'Make Available'}
                 </button>
-                <button class="btn delete-btn" onclick="deleteItem('${item._id}', '${escapeAttr(item.name)}')">
-                  🗑️ Delete
-                </button>
+                <button class="btn delete-btn" onclick="deleteItem('${item._id}', '${escapeAttr(item.name)}')">Delete</button>
               </div>
             </div>
           </div>
@@ -614,25 +630,22 @@
       } catch (error) {
         console.error('Error loading items:', error);
         loadingState.style.display = 'none';
-        showAlert('Error loading items: ' + error.message, 'error');
+        showAlert(`Error loading items: ${error.message}`, 'error');
         emptyState.style.display = 'block';
       }
     }
 
-    // ============== EDIT ITEM ==============
+    // EDIT ITEM
     function editItem(itemIndex) {
       const item = allItems[itemIndex];
-      console.log('Opening edit modal for item:', item);
-      
       currentEditingItemId = item._id;
-      
+
       document.getElementById('editItemName').value = item.name;
       document.getElementById('editItemDescription').value = item.description;
       document.getElementById('editItemCategory').value = item.category;
       document.getElementById('editItemPrice').value = item.price;
       document.getElementById('editItemAvailability').value = item.availability;
       document.getElementById('editItemPhoto').value = '';
-      
       document.getElementById('editModal').classList.add('active');
     }
 
@@ -641,29 +654,21 @@
       currentEditingItemId = null;
     }
 
-    // ============== SAVE ITEM CHANGES ==============
+    // SAVE ITEM CHANGES
     async function saveItemChanges(event) {
       event.preventDefault();
-      console.log('Saving changes for item:', currentEditingItemId);
 
       const name = document.getElementById('editItemName').value;
       const description = document.getElementById('editItemDescription').value;
       const category = document.getElementById('editItemCategory').value;
       const price = document.getElementById('editItemPrice').value;
       const availability = document.getElementById('editItemAvailability').value;
-      const photoFile = document.getElementById('editItemPhoto').files[0];
+      const photoFile = document.getElementById('editItemPhoto').files;
 
       try {
-        let updateData = {
-          name,
-          description,
-          category,
-          price: parseInt(price),
-          availability
-        };
+        let updateData = { name, description, category, price: parseInt(price), availability };
 
         if (photoFile) {
-          console.log('Converting new photo to base64...');
           const base64Photo = await fileToBase64(photoFile);
           updateData.photo = base64Photo;
         }
@@ -678,28 +683,22 @@
           body: JSON.stringify(updateData)
         });
 
-        console.log('Update response status:', response.status);
-
         if (!response.ok) {
           const error = await response.json();
           throw new Error(error.message || 'Failed to update item');
         }
 
-        console.log('Item updated successfully!');
         closeEditModal();
-        showAlert('✅ Item updated successfully!', 'success');
+        showAlert('Item updated successfully!', 'success');
         loadSellerItems();
-
       } catch (error) {
         console.error('Error updating item:', error);
-        showAlert('❌ Error updating item: ' + error.message, 'error');
+        showAlert(`Error updating item: ${error.message}`, 'error');
       }
     }
 
-    // ============== TOGGLE AVAILABILITY ==============
+    // TOGGLE AVAILABILITY
     async function toggleAvailability(itemId, newAvailability) {
-      console.log('Toggling availability for item:', itemId, 'to:', newAvailability);
-
       try {
         const token = auth.getToken();
         const response = await fetch(`${API_BASE_URL}/api/items/${itemId}`, {
@@ -711,29 +710,22 @@
           body: JSON.stringify({ availability: newAvailability })
         });
 
-        console.log('Toggle response status:', response.status);
-
         if (!response.ok) {
           const error = await response.json();
           throw new Error(error.message || 'Failed to update availability');
         }
 
-        console.log('Availability toggled successfully!');
-        showAlert(`✅ Item marked as ${newAvailability}!`, 'success');
+        showAlert(`Item marked as ${newAvailability === 'available' ? 'Available' : 'Unavailable'}!`, 'success');
         loadSellerItems();
-
       } catch (error) {
         console.error('Error toggling availability:', error);
-        showAlert('❌ Error: ' + error.message, 'error');
+        showAlert(`Error: ${error.message}`, 'error');
       }
     }
 
-    // ============== DELETE ITEM ==============
+    // DELETE ITEM
     async function deleteItem(itemId, itemName) {
-      console.log('Deleting item:', itemId);
-
       if (!confirm(`Are you sure you want to delete "${itemName}"? This action cannot be undone.`)) {
-        console.log('Delete cancelled by user');
         return;
       }
 
@@ -746,60 +738,44 @@
           }
         });
 
-        console.log('Delete response status:', response.status);
-
         if (!response.ok) {
           const error = await response.json();
           throw new Error(error.message || 'Failed to delete item');
         }
 
-        console.log('Item deleted successfully!');
-        showAlert('✅ Item deleted successfully!', 'success');
+        showAlert('Item deleted successfully!', 'success');
         loadSellerItems();
-
       } catch (error) {
         console.error('Error deleting item:', error);
-        showAlert('❌ Error deleting item: ' + error.message, 'error');
+        showAlert(`Error deleting item: ${error.message}`, 'error');
       }
     }
 
-    // ============== UTILITY FUNCTIONS ==============
+    // UTILITY FUNCTIONS
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
+        reader.onerror = () => reject(reader);
         reader.readAsDataURL(file);
       });
     }
 
     function escapeHtml(text) {
       if (!text) return '';
-      const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-      };
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
       return text.replace(/[&<>"']/g, m => map[m]);
     }
 
     function escapeAttr(text) {
       if (!text) return '';
-      return text
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+      return text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     function showAlert(message, type) {
       const alertBox = document.getElementById('alertBox');
       alertBox.textContent = message;
       alertBox.className = `alert ${type}`;
-      
       setTimeout(() => {
         alertBox.className = 'alert';
       }, 4000);
@@ -811,7 +787,7 @@
     }
 
     // Close modal when clicking outside
-    document.addEventListener('click', (event) => {
+    document.addEventListener('click', function(event) {
       const modal = document.getElementById('editModal');
       if (event.target === modal) {
         closeEditModal();
@@ -819,4 +795,5 @@
     });
   </script>
 </body>
+
 </html>

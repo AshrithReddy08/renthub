@@ -606,47 +606,63 @@
       }).join('');
     }
 
-    // GENERATE BILL
-    function generateBill(itemJson) {
-      const item = JSON.parse(itemJson);
-      console.log('Generating bill for:', item);
-
-      const modal = document.getElementById('billModal');
-      const billDetails = document.getElementById('billDetails');
-      const deposit = Math.round(item.price * 0.5);
-      const total = parseInt(item.price) + deposit;
-      const sellerName = item.userId && item.userId.name ? item.userId.name : 'Unknown';
-
-      billDetails.innerHTML = `
-        <div class="bill-item">
-          <span>Item Name</span>
-          <strong>${item.name}</strong>
-        </div>
-        <div class="bill-item">
-          <span>Seller</span>
-          <strong>${sellerName}</strong>
-        </div>
-        <div class="bill-item">
-          <span>Category</span>
-          <strong>${item.category}</strong>
-        </div>
-        <div class="bill-item">
-          <span>Rental per day</span>
-          <strong>₹${item.price}</strong>
-        </div>
-        <div class="bill-item">
-          <span>Security Deposit (50%)</span>
-          <strong>₹${deposit}</strong>
-        </div>
-        <div class="bill-total">
-          <span>Total Amount</span>
-          <strong>₹${total}</strong>
-        </div>
-      `;
-
-      modal.style.display = 'flex';
+     function escapeHtml(text) {
+      if (!text) return '';
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      };
+      return text.replace(/[&<>"']/g, m => map[m]);
     }
 
+    // GENERATE BILL
+    function generateBill(itemJson) {
+      try {
+        const item = JSON.parse(itemJson);
+        console.log('Generating bill for:', item);
+
+        const modal = document.getElementById('billModal');
+        const billDetails = document.getElementById('billDetails');
+        const deposit = Math.round(item.price * 0.5);
+        const total = parseInt(item.price) + deposit;
+        const sellerName = item.userId && item.userId.name ? item.userId.name : 'Unknown';
+
+        billDetails.innerHTML = `
+          <div class="bill-item">
+            <span>Item Name</span>
+            <strong>${escapeHtml(item.name)}</strong>
+          </div>
+          <div class="bill-item">
+            <span>Seller</span>
+            <strong>${escapeHtml(sellerName)}</strong>
+          </div>
+          <div class="bill-item">
+            <span>Category</span>
+            <strong>${escapeHtml(item.category)}</strong>
+          </div>
+          <div class="bill-item">
+            <span>Rental per day</span>
+            <strong>₹${item.price}</strong>
+          </div>
+          <div class="bill-item">
+            <span>Security Deposit (50%)</span>
+            <strong>₹${deposit}</strong>
+          </div>
+          <div class="bill-total">
+            <span>Total Amount</span>
+            <strong>₹${total}</strong>
+          </div>
+        `;
+
+        modal.style.display = 'flex';
+      } catch (error) {
+        console.error('Error generating bill:', error);
+        alert('Error generating bill: ' + error.message);
+      }
+    }
     // CLOSE BILL
     function closeBill() {
       document.getElementById('billModal').style.display = 'none';
